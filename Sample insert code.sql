@@ -1,13 +1,68 @@
 USE DOGPAWS_Surveys_Temp
 
 SELECT * FROM WK_1
-select * from RAW_Questions
+select * from tblQUESTION_TYPE
 
 INSERT INTO tblSURVEY(SurveyName, SurveyBeginDate)
 VALUES('DogPaws Interest Survey', 'May 22, 2020')
 
+/* inserts into tblQUESTION */
 
---
+
+--Insert Questions 22-23, 25-27 into tblQUESTION
+
+INSERT INTO tblQUESTION (QuestionTypeID, QuestionName)	--Insert into tblQUESTION
+	VALUES (4, 'I Am...');		--Question 22
+DECLARE @Question_22 INT = IDENT_CURRENT('tblQUESTION');	--Store new QuestionID to insert into tblSURVEY_QUESTION later
+
+INSERT INTO tblQUESTION (QuestionTypeID, QuestionName)
+	VALUES (4, 'My major is...');	--Question 23
+DECLARE @Question_23 INT = IDENT_CURRENT('tblQUESTION');
+
+INSERT INTO tblQUESTION (QuestionTypeID, QuestionName)
+	VALUES (3, 'Rate your level of agreement with the following statements: [I have a hard time finding my passion and my desired major.]'); --Question 25
+DECLARE @Question_25 INT = IDENT_CURRENT('tblQUESTION');
+
+INSERT INTO tblQUESTION (QuestionTypeID, QuestionName)
+	VALUES (3, 'Rate your level of agreement with the following statements: [I have a hard time getting an internship.]'); --Question 26
+DECLARE @Question_26 INT = IDENT_CURRENT('tblQUESTION');
+
+INSERT INTO tblQUESTION (QuestionTypeID, QuestionName)
+	VALUES (3, 'Rate your level of agreement with the following statements: [I have a hard time connecting with people within the industry.]');	--Question 27
+DECLARE @Question_27 INT = IDENT_CURRENT('tblQUESTION');
+
+
+
+
+/* inserts into tblSURVEY_QUESTION*/
+
+--Insert question 22-23, 25-2 into tblSURVEY_QUESTION
+INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID)
+	Values(@SurveyID, @Question_22); -- VALUES(1, @Question_22) ?
+DECLARE @SurveyQuestionID_22 INT = IDENT_CURRENT('tblSURVEY_QUESTION'); -- may need to change how we get this
+
+INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID)
+	Values(@SurveyID, @Question_23);
+DECLARE @SurveyQuestionID_23 INT = IDENT_CURRENT('tblSURVEY_QUESTION');
+
+INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID)
+	Values(@SurveyID, @Question_25);
+DECLARE @SurveyQuestionID_25 INT = IDENT_CURRENT('tblSURVEY_QUESTION');
+
+INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID)
+	Values(@SurveyID, @Question_26);
+DECLARE @SurveyQuestionID_26 INT = IDENT_CURRENT('tblSURVEY_QUESTION');
+
+INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID)
+	Values(@SurveyID, @Question_27);
+DECLARE @SurveyQuestionID_27 INT = IDENT_CURRENT('tblSURVEY_QUESTION');
+
+
+
+
+/* ***************************************************************** */
+
+
 
 GO
 CREATE PROC uspInsertFromCSV
@@ -59,6 +114,62 @@ BEGIN
 
 
 		*/
+
+		/* Q 3-5 */
+
+		DECLARE @Yr varchar(50), @StudType varchar(50), @Housing varchar(50), 
+			@DT_ID1 INT, @DT_ID2 INT, @DT_ID3 INT, @D_ID INT, @Q_ID INT, @R_ID INT, @S_ID INT, @SQ_ID INT
+
+		SET @Yr = (SELECT Question_3 FROM WK_1)
+		SET @StudType = (SELECT Question_4 FROM WK_1)
+		SET @Housing = (SELECT Question_5 FROM WK_1)
+
+		-- ****** getting detail_typeID -> will have to populate detail_type table / figure out how detail types are categorized
+		SET @DT_ID1 = (
+			SELECT DetailTypeID
+			FROM tblDETAIL_TYPE
+			WHERE DetailTypeName = 'student year'
+		)
+
+		SET @DT_ID2 = (
+			SELECT DetailTypeID
+			FROM tblDETAIL_TYPE
+			WHERE DetailTypeName = 'resident status'
+		)
+
+		SET @DT_ID3 = (
+			SELECT DetailTypeID
+			FROM tblDETAIL_TYPE
+			WHERE DetailTypeName = 'housing status'
+		)
+
+		-- insert response for q3 into detail table
+		INSERT INTO tblDETAIL(DetailName, DetailTypeID)
+		VALUES(@Yr, @DT_ID1)
+
+		SET @D_ID = (SELECT SCOPE_IDENTITY())
+
+		-- insert into person_detail
+		INSERT INTO tblPERSON_DETAIL(PersonID, DetailID)
+		VALUES(@PersonPK, @D_ID)
+
+		-- repeat for q4
+		INSERT INTO tblDETAIL(DetailName, DetailTypeID)
+		VALUES(@StudType, @DT_ID2)
+
+		SET @D_ID = (SELECT SCOPE_IDENTITY())
+
+		INSERT INTO tblPERSON_DETAIL(PersonID, DetailID)
+		VALUES(@PersonPK, @D_ID)
+
+		-- repeat for q5
+		INSERT INTO tblDETAIL(DetailName, DetailTypeID)
+		VALUES(@Housing, @DT_ID3)
+
+		SET @D_ID = (SELECT SCOPE_IDENTITY())
+
+		INSERT INTO tblPERSON_DETAIL(PersonID, DetailID)
+		VALUES(@PersonPK, @D_ID)
 
 		/* Q6 */
 
@@ -161,6 +272,45 @@ BEGIN
 				VALUES (@PersonPK, @ResponseDateTime, 'Go to a party')
 			END
 		/* IF [user typed response] */
+
+
+
+
+		--Insert questions 22,23, and 25-27 into tblRESPONSE and tblSURVEY_RESPONSE
+		DECLARE @Response varchar(30) = (SELECT Question_22 FROM WK_1 WHERE ResponseID = @RowNum);	--Store user response into variable
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)	--Insert into tblRESPONSE
+			VALUES(@PersonPK, @ResponseDateTime, @Response);
+		DECLARE @ResponseID INT = IDENT_CURRENT('tblRESPONSE');		--Store new responseID
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)	--Insert into  tblSURVEY_QUESTION_RESPONSE
+			VALUES(@SurveyQuestionID_22, @ResponseID);
+
+		SET @Response = (SELECT Question_23 FROM WK_1 WHERE ResponseID = @RowNum);
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+			VALUES(@PersonPK, @ResponseDateTime, @Response);
+		SET @ResponseID = IDENT_CURRENT('tblRESPONSE');
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+			VALUES(@SurveyQuestionID_23, @ResponseID);
+
+		SET @Response = (SELECT Question_25 FROM WK_1 WHERE ResponseID = @RowNum);
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+			VALUES(@PersonPK, @ResponseDateTime, @Response);
+		SET @ResponseID = IDENT_CURRENT('tblRESPONSE');
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+			VALUES(@SurveyQuestionID_25, @ResponseID);
+
+		SET @Response = (SELECT Question_26 FROM WK_1 WHERE ResponseID = @RowNum);
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+			VALUES(@PersonPK, @ResponseDateTime, @Response);
+		SET @ResponseID = IDENT_CURRENT('tblRESPONSE');
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+			VALUES(@SurveyQuestionID_26, @ResponseID);
+
+		SET @Response = (SELECT Question_27 FROM WK_1 WHERE ResponseID = @RowNum);
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+			VALUES(@PersonPK, @ResponseDateTime, @Response);
+		SET @ResponseID = IDENT_CURRENT('tblRESPONSE');
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+			VALUES(@SurveyQuestionID_27, @ResponseID);
 
 
 		/* Q 28-32 */
