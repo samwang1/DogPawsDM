@@ -44,6 +44,8 @@ DECLARE @Question_5 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName
 DECLARE @Question_10 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I had a hard time finding a group that I feel I belong to.]');
 DECLARE @Question_11 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [Joining an RSO helps me to make friends.]');
 DECLARE @Question_12 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I joined something I never thought I would join before coming to college.]');
+DECLARE @Question_18 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What are some factors that made you join the RSO(s) you are a part of on campus? (If you are not in an RSO, please indicate N/A)')
+DECLARE @Question_19 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What are some factors that have prevented you or discouraged you from joining an RSO on campus? (If you are in an RSO, please indicate N/A)')
 DECLARE @Question_20 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What platform(s) do you use to keep track of events and RSO? (Select all that apply)')
 DECLARE @Question_22 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'I Am...');
 DECLARE @Question_23 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My major is...');
@@ -140,13 +142,6 @@ BEGIN
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 		VALUES(@SurvQuestID, @RespID)
 
-		/* 
-		
-	
-		other inserts 
-
-
-		*/
 
 		/* Q 3-5 */
 
@@ -377,6 +372,106 @@ BEGIN
 		/* IF [user typed response] */
 
 
+		/* Q8 */
+		DECLARE @Q8 varchar(max) = (SELECT Question_8 FROM WK_1 WHERE ResponseID = @RowNum)
+
+		IF @Q8 LIKE '%course load%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES(@PersonPK, @ResponseDateTime, 'Course load, homework, assignments')
+			END
+		IF @Q8 LIKE '%exams%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES(@PersonPK, @ResponseDateTime, 'Exams')
+			END
+		IF @Q8 LIKE '%Having a difficult major%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES(@PersonPK, @ResponseDateTime, 'Having a difficult major')
+			END
+		IF @Q8 LIKE '%Getting into a difficult major%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES(@PersonPK, @ResponseDateTime, 'Getting into a difficult major')
+			END
+		IF @Q8 LIKE '%Making friends%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES(@PersonPK, @ResponseDateTime, 'Making friends')
+			END
+		IF @Q8 LIKE '%Finding a club that fits your interests%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES(@PersonPK, @ResponseDateTime, 'Finding a club that fits your interests')
+			END
+		IF @Q8 LIKE '%Finding community%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES(@PersonPK, @ResponseDateTime, 'Finding community')
+			END
+		IF @Q8 LIKE '%Adapting to living on your own%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES(@PersonPK, @ResponseDateTime, 'Adapting to living on your own')
+			END
+
+		-- parse user input response
+
+		/* Q9 */
+		DECLARE @Q9 varchar(max) = (SELECT Question_9 FROM WK_1 WHERE ResponseID = @RowNum)
+		IF @Q9 LIKE '%access to RSOs%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Easier access to RSOs and their events throughout the year')
+			END
+		IF @Q9 LIKE '%commute to campus%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Finding someone to commute to campus with')
+			END
+		IF @Q9 LIKE '%internships%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Career development opportunities (i.e. networking, finding internships)')
+			END	
+		IF @Q9 LIKE '%roommate%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Finding a roommate you can get along')
+			END
+		IF @Q9 LIKE '%community%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Developing a community')
+			END
+		IF @Q9 LIKE '%study groups%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Creating study groups')
+			END
+		IF @Q9 LIKE '%connections%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Making connections during class')
+			END
+		IF @Q9 LIKE '%academic resources%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Knowing what academic resources are available')
+			END
+		IF @Q9 LIKE '%research%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Finding research opportunities')
+			END
+		IF @Q9 LIKE '%majors%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Exploring different majors')
+			END
+
+
 		/* Insert response for question 10 - 12 */
 		DECLARE @Question_10 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I had a hard time finding a group that I feel I belong to.]');
 		DECLARE @Question_11 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [Joining an RSO helps me to make friends.]');
@@ -423,6 +518,22 @@ BEGIN
 			(@PersonPK, @ResponseDateTime, @Q15),
 			(@PersonPK, @ResponseDateTime, @Q16),
 			(@PersonPK, @ResponseDateTime, @Q17)
+
+		DECLARE @Q18 varchar(max) = (SELECT Question_18 FROM WK_1 WHERE ResponseID = @RowNum)
+		IF @Q18 <> ''
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, @Q18)
+			END
+		
+
+		DECLARE @Q19 varchar(max) = (SELECT Question_19 FROM WK_1 WHERE ResponseID = @RowNum)
+		IF @Q19 <> ''
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, @Q19)
+			END
+
 
 		-- Question 20
 		DECLARE @Q20 varchar(max) = (SELECT Question_20 FROM WK_1 WHERE ResponseID = @RowNum)
