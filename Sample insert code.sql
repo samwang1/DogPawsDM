@@ -471,6 +471,9 @@ BEGIN
 				VALUES (@PersonPK, @ResponseDateTime, 'Exploring different majors')
 			END
 
+		-- insert the question index into survey_question_response	
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+	    VALUES(9, @RowNum)
 
 		/* Insert response for question 10 - 12 */
 		DECLARE @Question_10 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I had a hard time finding a group that I feel I belong to.]');
@@ -719,13 +722,11 @@ BEGIN
 		DECLARE @ResponseID INT = IDENT_CURRENT('tblRESPONSE');		--Store new responseID
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)	--Insert into  tblSURVEY_QUESTION_RESPONSE
 			VALUES(@SurveyQuestionID_22, @ResponseID);
-
 		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 			VALUES (@PersonPK, @ResponseDateTime, @Response_23);
 		SET @ResponseID = IDENT_CURRENT('tblRESPONSE');
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 			VALUES(@SurveyQuestionID_23, @ResponseID);
-
 		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 			VALUES (@PersonPK, @ResponseDateTime, @Response_25);
 		SET @ResponseID = IDENT_CURRENT('tblRESPONSE');
@@ -747,27 +748,37 @@ BEGIN
 
 
 		/* Q 28-32 */
-		Declare @Response_28 varchar(100), 
-		@Response_29 varchar(100), @Response_30 varchar(100), @Response_31  varchar(100), 
-		@Response_32 varchar(100) -- declare variables
+		DECLARE @Response_28 VARCHAR(100), 
+		@Response_29 VARCHAR(100), @Response_30 VARCHAR(100), @Response_31  VARCHAR(100), 
+		@Response_32 VARCHAR(100) -- declare variables
 
-		Set @Response_28 = (Select Question_28 From WK_1 Where ResponseID = @RowNum)
-		Set @Response_29 = (Select Question_29 From WK_1 Where ResponseID = @RowNum)
-		Set @Response_30 = (Select Question_30 From WK_1 Where ResponseID = @RowNum)
-		Set @Response_31 = (Select Question_31 From WK_1 Where ResponseID = @RowNum)
-		Set @Response_32 = (Select Question_32 From WK_1 Where ResponseID = @RowNum)
+		SET @Response_28 = (SELECT Question_28 FROM WK_1 WHERE ResponseID = @RowNum)
+		SET @Response_29 = (SELECT Question_29 FROM WK_1 WHERE ResponseID = @RowNum)
+		SET @Response_30 = (SELECT Question_30 FROM WK_1 WHERE ResponseID = @RowNum)
+		SET @Response_31 = (SELECT Question_31 FROM WK_1 WHERE ResponseID = @RowNum)
+		SET @Response_32 = (SELECT Question_32 FROM WK_1 WHERE ResponseID = @RowNum)
 	
-		Insert Into tblResponse(PersonID, ResponseDateTime, ResponseName)
-		Values(@PersonPK, @ResponseDateTime, @Response_28)
-		Insert Into tblResponse(PersonID, ResponseDateTime, ResponseName)
-		Values(@PersonPK, @ResponseDateTime, @Response_29)
-		Insert Into tblResponse(PersonID, ResponseDateTime, ResponseName)
-		Values(@PersonPK, @ResponseDateTime, @Response_30)
-		Insert Into tblResponse(PersonID, ResponseDateTime, ResponseName)
-		Values(@PersonPK, @ResponseDateTime, @Response_31)
-		Insert Into tblResponse(PersonID, ResponseDateTime, ResponseName)
-		Values(@PersonPK, @ResponseDateTime, @Response_32)
-
+		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
+		VALUES(@PersonPK, @ResponseDateTime, @Response_28)
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+	    VALUES(28, @RowNum) --Insert into   tblSURVEY_QUESTION_RESPONSE
+		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
+		VALUES(@PersonPK, @ResponseDateTime, @Response_29)
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+	    VALUES(29, @RowNum) --Insert into  tblSURVEY_QUESTION_RESPONSE
+		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
+		VALUES(@PersonPK, @ResponseDateTime, @Response_30)
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+	    VALUES(30, @RowNum) --Insert into  tblSURVEY_QUESTION_RESPONSE
+		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
+		VALUES(@PersonPK, @ResponseDateTime, @Response_31)
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+	    VALUES(31, @RowNum) --Insert into  tblSURVEY_QUESTION_RESPONSE
+		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
+		VALUES(@PersonPK, @ResponseDateTime, @Response_32)
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+	    VALUES(32, @RowNum) --Insert into  tblSURVEY_QUESTION_RESPONSE
+ 
 
 		/* Q33 */
 		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
