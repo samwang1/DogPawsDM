@@ -13,7 +13,6 @@ DECLARE @ShortAns INT = (SELECT QuestionTypeID FROM tblQUESTION_TYPE WHERE Quest
 DECLARE @Ranking INT = (SELECT QuestionTypeID FROM tblQUESTION_TYPE WHERE QuestionTypeName = 'Ranking')
 
 
---Insert Questions 22-23, 25-27 into tblQUESTION
 INSERT INTO tblQUESTION (QuestionTypeID, QuestionName)	--Insert into tblQUESTION
 	VALUES
 		(@ShortAns, 'Timestamp'), -- q1
@@ -24,17 +23,20 @@ INSERT INTO tblQUESTION (QuestionTypeID, QuestionName)	--Insert into tblQUESTION
 		(@MC, 'Which statements below best describe you? (Select all that apply)'), -- q6
 		(@MC, 'What experiences or goals did you have for yourself when you came to UW?'), -- q7
 		(@MC, 'What struggles did you anticipate you would have during your first year?'), -- q8
+		-- 9 Lyons
 		(@MC, 'Rate your level of agreement with the following statements: [I had a hard time finding a group that I feel I belong to.]'), -- Q10
 		(@MC, 'Rate your level of agreement with the following statements: [Joining an RSO helps me to make friends.]'), -- Q11
 		(@MC, 'Rate your level of agreement with the following statements: [I joined something I never thought I would join before coming to college.]'), -- Q12
+		-- 13-17 Rayna
 		(@MC, 'What platform(s) do you use to keep track of events and RSO? (Select all that apply)'), --Question 20 (multi-valued)
+		-- 21 Rayna
 		(@MC, 'I am... (major status)'),	--Question 22
 		(@MC, 'My major is...'),	--Question 23
 		(@MC, 'Which of the following platforms have you interacted with to network or search for a job or internship? (Select all that apply)'), -- Q24
 		(@LikertScale, 'Rate your level of agreement with the following statements: [I have a hard time finding my passion and my desired major.]'), --Question 25
 		(@LikertScale, 'Rate your level of agreement with the following statements: [I have a hard time getting an internship.]'), --Question 26
 		(@LikertScale, 'Rate your level of agreement with the following statements: [I have a hard time connecting with people within the industry.]'),	--Question 27
-
+		-- 28-32 Lyons
 		(@ShortAns, 'Additionally, please leave your preferred first and last name here if you answered yes to either of the first two questions asked on this page (format: Harry Husky):'); -- q33
 
 DECLARE @Question_1 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Timestamp')
@@ -42,24 +44,29 @@ DECLARE @Question_2 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName
 DECLARE @Question_3 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What is your class standing for the 2020-2021 school year?')
 DECLARE @Question_4 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'I am an... (resident status)')
 DECLARE @Question_5 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'I am... (housing status)')
-DECLARE @Question_8 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What struggles did you anticipate you would have during your first year?')
+DECLARE @Question_6 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'I am... (housing status)')
+DECLARE @Question_7 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Which statements below best describe you? (Select all that apply)')
+DECLARE @Question_8 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What experiences or goals did you have for yourself when you came to UW?')
+-- 9 Lyons
 DECLARE @Question_10 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I had a hard time finding a group that I feel I belong to.]');
 DECLARE @Question_11 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [Joining an RSO helps me to make friends.]');
 DECLARE @Question_12 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I joined something I never thought I would join before coming to college.]');
+-- 13-17 Rayna
 DECLARE @Question_18 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What are some factors that made you join the RSO(s) you are a part of on campus? (If you are not in an RSO, please indicate N/A)')
 DECLARE @Question_19 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What are some factors that have prevented you or discouraged you from joining an RSO on campus? (If you are in an RSO, please indicate N/A)')
 DECLARE @Question_20 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What platform(s) do you use to keep track of events and RSO? (Select all that apply)')
+-- 21 Rayna
 DECLARE @Question_22 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'I Am...');
 DECLARE @Question_23 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My major is...');
 DECLARE @Question_25 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have a hard time finding my passion and my desired major.]');
 DECLARE @Question_26 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have a hard time getting an internship.]');
 DECLARE @Question_27 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have a hard time connecting with people within the industry.]');
+-- 28-32 Lyons
 DECLARE @Question_33 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName LIKE '%Harry Husky%')
 
 /* inserts into tblSURVEY_QUESTION*/
 DECLARE @SurvID INT = (SELECT SurveyID FROM tblSURVEY WHERE SurveyName = 'DogPaws Interest Survey')
 
---Insert question 22-23, 25-2 into tblSURVEY_QUESTION
 INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID)
 	Values
 		(@SurvID, @Question_1),
@@ -67,6 +74,8 @@ INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID)
 		(@SurvID, @Question_3),
 		(@SurvID, @Question_4),
 		(@SurvID, @Question_5),
+		(@SurvID, @Question_6),
+		(@SurvID, @Question_7),
 		(@SurvID, @Question_8),
 		(@SurvID, @Question_10),
 		(@SurvID, @Question_11),
