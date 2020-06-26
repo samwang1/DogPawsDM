@@ -23,7 +23,7 @@ INSERT INTO tblQUESTION (QuestionTypeID, QuestionName)	--Insert into tblQUESTION
 		(@MC, 'Which statements below best describe you? (Select all that apply)'), -- q6
 		(@MC, 'What experiences or goals did you have for yourself when you came to UW?'), -- q7
 		(@MC, 'What struggles did you anticipate you would have during your first year?'), -- q8
-		-- 9 Lyons
+		(@MC, 'In what ways do you wish you had more support during your first year?'), -- q9
 		(@MC, 'Rate your level of agreement with the following statements: [I had a hard time finding a group that I feel I belong to.]'), -- Q10
 		(@MC, 'Rate your level of agreement with the following statements: [Joining an RSO helps me to make friends.]'), -- Q11
 		(@MC, 'Rate your level of agreement with the following statements: [I joined something I never thought I would join before coming to college.]'), -- Q12
@@ -36,7 +36,11 @@ INSERT INTO tblQUESTION (QuestionTypeID, QuestionName)	--Insert into tblQUESTION
 		(@LikertScale, 'Rate your level of agreement with the following statements: [I have a hard time finding my passion and my desired major.]'), --Question 25
 		(@LikertScale, 'Rate your level of agreement with the following statements: [I have a hard time getting an internship.]'), --Question 26
 		(@LikertScale, 'Rate your level of agreement with the following statements: [I have a hard time connecting with people within the industry.]'),	--Question 27
-		-- 28-32 Lyons
+		(@LikertScale, 'Rate your level of agreement with the following statements: [Career Service provides adequate resources for me to succeed.]'),	--Question 28
+		(@LikertScale, 'Rate your level of agreement with the following statements: [I feel prepared to find internships.]'),	--Question 29
+		(@LikertScale, 'Rate your level of agreement with the following statements: [I have resources to get trustworthy feedback on my resumes/cover letters.]'),	--Question 30
+		(@MC, 'Can we contact you for more information?'),	--Question 31
+		(@MC, 'Are you interested in joining the DOGPAWS team?'),	--Question 32
 		(@ShortAns, 'Additionally, please leave your preferred first and last name here if you answered yes to either of the first two questions asked on this page (format: Harry Husky):'); -- q33
 
 DECLARE @Question_1 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Timestamp')
@@ -47,7 +51,7 @@ DECLARE @Question_5 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName
 DECLARE @Question_6 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'I am... (housing status)')
 DECLARE @Question_7 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Which statements below best describe you? (Select all that apply)')
 DECLARE @Question_8 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What experiences or goals did you have for yourself when you came to UW?')
--- 9 Lyons
+DECLARE @Question_9 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'In what ways do you wish you had more support during your first year?')
 DECLARE @Question_10 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I had a hard time finding a group that I feel I belong to.]');
 DECLARE @Question_11 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [Joining an RSO helps me to make friends.]');
 DECLARE @Question_12 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I joined something I never thought I would join before coming to college.]');
@@ -61,7 +65,11 @@ DECLARE @Question_23 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionNam
 DECLARE @Question_25 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have a hard time finding my passion and my desired major.]');
 DECLARE @Question_26 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have a hard time getting an internship.]');
 DECLARE @Question_27 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have a hard time connecting with people within the industry.]');
--- 28-32 Lyons
+DECLARE @Question_28 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [Career Service provides adequate resources for me to succeed.]');
+DECLARE @Question_29 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I feel prepared to find internships.]');
+DECLARE @Question_30 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have resources to get trustworthy feedback on my resumes/cover letters.]');
+DECLARE @Question_31 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Can we contact you for more information?');
+DECLARE @Question_32 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Are you interested in joining the DOGPAWS team?');
 DECLARE @Question_33 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName LIKE '%Harry Husky%')
 
 /* inserts into tblSURVEY_QUESTION*/
