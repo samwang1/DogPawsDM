@@ -107,7 +107,7 @@ INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID, QuestionNumber)
 		(@SurvID, @Question_17, 17),
 		(@SurvID, @Question_18, 18),
 		(@SurvID, @Question_19, 19),
-		(@SurvID, @Question_20, 20),	--Question 20 (multi-valued)
+		(@SurvID, @Question_20, 20),
 		(@SurvID, @Question_21, 21),
 		(@SurvID, @Question_22, 22),
 		(@SurvID, @Question_23, 23),
