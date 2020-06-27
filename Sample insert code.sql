@@ -27,9 +27,13 @@ INSERT INTO tblQUESTION (QuestionTypeID, QuestionName)	--Insert into tblQUESTION
 		(@MC, 'Rate your level of agreement with the following statements: [I had a hard time finding a group that I feel I belong to.]'), -- Q10
 		(@MC, 'Rate your level of agreement with the following statements: [Joining an RSO helps me to make friends.]'), -- Q11
 		(@MC, 'Rate your level of agreement with the following statements: [I joined something I never thought I would join before coming to college.]'), -- Q12
-		-- 13-17 Rayna
+		(@LikertScale, 'Rate your level of agreement with the following statements: [I find it easier to make friends when we have shared common interests.]'), -- Q13
+		(@LikertScale, 'Rate your level of agreement with the following statements: [I find it hard to make friends at UW.]'), -- Q14
+		(@LikertScale, 'Rate your level of agreement with the following statements: [I initially felt lost coming when I came to UW.]'), -- Q15
+		(@LikertScale, 'Rate your level of agreement with the following statements: [I find it easy to form study groups.]'), -- Q16
+		(@LikertScale, 'Rate your level of agreement with the following statements: [I have a lot of friends from class or study groups.]'), -- Q17
 		(@MC, 'What platform(s) do you use to keep track of events and RSO? (Select all that apply)'), --Question 20 (multi-valued)
-		-- 21 Rayna
+		(@MC, 'What are some of the programs that you have found helpful in assisting you to find a community at UW? (Select all that apply)'), -- Q21 (multi-valued)
 		(@MC, 'I am... (major status)'),	--Question 22
 		(@MC, 'My major is...'),	--Question 23
 		(@MC, 'Which of the following platforms have you interacted with to network or search for a job or internship? (Select all that apply)'), -- Q24
@@ -55,11 +59,15 @@ DECLARE @Question_9 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName
 DECLARE @Question_10 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I had a hard time finding a group that I feel I belong to.]');
 DECLARE @Question_11 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [Joining an RSO helps me to make friends.]');
 DECLARE @Question_12 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I joined something I never thought I would join before coming to college.]');
--- 13-17 Rayna
+DECLARE @Question_13 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I find it easier to make friends when we have shared common interests.]')
+DECLARE @Question_14 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I find it hard to make friends at UW.]')
+DECLARE @Question_15 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I initially felt lost coming when I came to UW.]')
+DECLARE @Question_16 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I find it easy to form study groups.]')
+DECLARE @Question_17 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have a lot of friends from class or study groups.]')
 DECLARE @Question_18 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What are some factors that made you join the RSO(s) you are a part of on campus? (If you are not in an RSO, please indicate N/A)')
 DECLARE @Question_19 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What are some factors that have prevented you or discouraged you from joining an RSO on campus? (If you are in an RSO, please indicate N/A)')
 DECLARE @Question_20 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What platform(s) do you use to keep track of events and RSO? (Select all that apply)')
--- 21 Rayna
+DECLARE @Question_21 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What are some of the programs that you have found helpful in assisting you to find a community at UW? (Select all that apply)')
 DECLARE @Question_22 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'I Am...');
 DECLARE @Question_23 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My major is...');
 DECLARE @Question_25 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have a hard time finding my passion and my desired major.]');
@@ -88,7 +96,13 @@ INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID)
 		(@SurvID, @Question_10),
 		(@SurvID, @Question_11),
 		(@SurvID, @Question_12),
+		(@SurvID, @Question_13),
+		(@SurvID, @Question_14),
+		(@SurvID, @Question_15),
+		(@SurvID, @Question_16),
+		(@SurvID, @Question_17),
 		(@SurvID, @Question_20),	--Question 20 (multi-valued)
+		(@SurvID, @Question_21),
 		(@SurvID, @Question_22),
 		(@SurvID, @Question_23),
 		(@SurvID, @Question_25),
