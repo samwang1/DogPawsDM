@@ -2,8 +2,8 @@ USE DOGPAWS_Surveys_Temp /* USE KEEPER_DogPawsDM_Testing */
 
 SELECT * FROM WK_1
 
-INSERT INTO tblSURVEY(SurveyName, SurveyBeginDate)
-VALUES('DogPaws Interest Survey', 'May 22, 2020')
+INSERT INTO tblSURVEY(SurveyName, SurveyBeginDate, SurveyEndDate, SurveyTypeID)
+VALUES('DogPaws Interest Survey', 'May 22, 2020', 'September 22, 2020', (SELECT SurveyTypeID FROM tblSURVEY_TYPE WHERE SurveyTypeName = 'Interest')) -- sample end date and surveytypeid
 
 /* inserts into tblQUESTION */
 DECLARE @MC INT = (SELECT QuestionTypeID FROM tblQUESTION_TYPE WHERE QuestionTypeName = 'Multiple choice')
@@ -86,41 +86,41 @@ DECLARE @Question_33 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionNam
 /* inserts into tblSURVEY_QUESTION*/
 DECLARE @SurvID INT = (SELECT SurveyID FROM tblSURVEY WHERE SurveyName = 'DogPaws Interest Survey')
 
-INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID)
+INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID, QuestionNumber)
 	Values
-		(@SurvID, @Question_1),
-		(@SurvID, @Question_2),
-		(@SurvID, @Question_3),
-		(@SurvID, @Question_4),
-		(@SurvID, @Question_5),
-		(@SurvID, @Question_6),
-		(@SurvID, @Question_7),
-		(@SurvID, @Question_8),
-		(@SurvID, @Question_9),
-		(@SurvID, @Question_10),
-		(@SurvID, @Question_11),
-		(@SurvID, @Question_12),
-		(@SurvID, @Question_13),
-		(@SurvID, @Question_14),
-		(@SurvID, @Question_15),
-		(@SurvID, @Question_16),
-		(@SurvID, @Question_17),
-		(@SurvID, @Question_18),
-		(@SurvID, @Question_19),
-		(@SurvID, @Question_20),	--Question 20 (multi-valued)
-		(@SurvID, @Question_21),
-		(@SurvID, @Question_22),
-		(@SurvID, @Question_23),
-		(@SurvID, @Question_24),
-		(@SurvID, @Question_25),
-		(@SurvID, @Question_26),
-		(@SurvID, @Question_27),
-		(@SurvID, @Question_28),
-		(@SurvID, @Question_29),
-		(@SurvID, @Question_30),
-		(@SurvID, @Question_31),
-		(@SurvID, @Question_32),
-		(@SurvID, @Question_33);
+		(@SurvID, @Question_1, 1),
+		(@SurvID, @Question_2, 2),
+		(@SurvID, @Question_3, 3),
+		(@SurvID, @Question_4, 4),
+		(@SurvID, @Question_5, 5),
+		(@SurvID, @Question_6, 6),
+		(@SurvID, @Question_7, 7),
+		(@SurvID, @Question_8, 8),
+		(@SurvID, @Question_9, 9),
+		(@SurvID, @Question_10, 10),
+		(@SurvID, @Question_11, 11),
+		(@SurvID, @Question_12, 12),
+		(@SurvID, @Question_13, 13),
+		(@SurvID, @Question_14, 14),
+		(@SurvID, @Question_15, 15),
+		(@SurvID, @Question_16, 16),
+		(@SurvID, @Question_17, 17),
+		(@SurvID, @Question_18, 18),
+		(@SurvID, @Question_19, 19),
+		(@SurvID, @Question_20, 20),	--Question 20 (multi-valued)
+		(@SurvID, @Question_21, 21),
+		(@SurvID, @Question_22, 22),
+		(@SurvID, @Question_23, 23),
+		(@SurvID, @Question_24, 24),
+		(@SurvID, @Question_25, 25),
+		(@SurvID, @Question_26, 26),
+		(@SurvID, @Question_27, 27),
+		(@SurvID, @Question_28, 28),
+		(@SurvID, @Question_29, 29),
+		(@SurvID, @Question_30, 30),
+		(@SurvID, @Question_31, 31),
+		(@SurvID, @Question_32, 32),
+		(@SurvID, @Question_33, 33);
 
 
 
