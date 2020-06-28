@@ -127,14 +127,15 @@ INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID, QuestionNumber)
 /* ***************************************************************** */
 
 
+EXEC uspInsertFromCSV @SurveyName = 'DogPaws Interest Survey'
 
 GO
-CREATE PROC uspInsertFromCSV
+ALTER PROC uspInsertFromCSV
 @SurveyName varchar(100)--,
 --@LastPull DateTime -- time of most recent .csv download
 AS
 BEGIN
-	DECLARE @RowNum INT = (SELECT TOP 1 ResponseID FROM tblRESPONSE ORDER BY ResponseID DESC) -- most recent response time
+	DECLARE @RowNum INT = 1--(SELECT TOP 1 ResponseID FROM tblRESPONSE ORDER BY ResponseID DESC) -- most recent response time
 	IF @RowNum IS NULL
 		BEGIN
 			SET @RowNum = 1
@@ -143,7 +144,7 @@ BEGIN
 		BEGIN
 			SET @RowNum = @RowNum + 1
 		END
-	
+
 	DECLARE @TotalRows INT = (SELECT COUNT(*) FROM WK_1)
 	DECLARE @F varchar(50), @L varchar(50), @Email varchar(100), @Temp varchar(100)
 
@@ -151,7 +152,7 @@ BEGIN
 		@PersonPK INT
 
 	DECLARE @SurveyID INT = (SELECT SurveyID FROM tblSURVEY WHERE SurveyName = 'DogPaws Interest Survey')
-
+	PRINT(@SurveyID)
 	WHILE @RowNum <= @TotalRows
 	BEGIN
 
@@ -159,35 +160,38 @@ BEGIN
 
 		IF @Temp IS NULL OR @Temp = 'N/A'
 			BEGIN
-				SET @F = NULL -- anonymous
-				SET @L = NULL -- anonymous
+				SET @F = 'anon'
+				SET @L = 'anon'
 			END
 		ELSE
 			BEGIN
 				SET @F = SUBSTRING(@Temp, 1, CHARINDEX(' ', @Temp) - 1)
 				SET @L = SUBSTRING(@Temp, CHARINDEX(' ', @Temp) + 1, LEN(@Temp))
 			END
-
+		
 		SET @Email = (SELECT Question_2 FROM WK_1 WHERE ResponseID = @RowNum)
-
+		
 		IF NOT EXISTS (SELECT PersonID FROM tblPERSON WHERE Email = @Email)
 			BEGIN
 				INSERT INTO tblPERSON(Fname, Lname, Email)
 				VALUES(@F, @L, @Email)
 			END
 
-		SET @PersonPK = SCOPE_IDENTITY()
-
+		SET @PersonPK = (SELECT PersonID FROM tblPERSON WHERE Email = @Email)
+		PRINT(@PersonPK)
+		
 		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 		VALUES(@PersonPK, @ResponseDateTime, @Email)
 		DECLARE @RespID INT = SCOPE_IDENTITY()
+		PRINT(@RespID)
+		PRINT('Inserted into response')
 
 		DECLARE @QuestID INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Email')
 		DECLARE @SurvQuestID INT = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION
 									WHERE SurveyID = @SurveyID AND QuestionID = @QuestID)
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 		VALUES(@SurvQuestID, @RespID)
-
+		PRINT('Inserted into SQR')
 
 		/* Q 3-5 */
 
@@ -872,7 +876,7 @@ BEGIN
 
 
 		/* Q24 */
-
+		/*
 		DECLARE @Question_24 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Which of the following platforms have you interacted with to network or search for a job or internship? (Select all that apply)');
 
 		-- Create a temporary table to store string_split values with PRIMARY KEY for lookup
@@ -907,7 +911,7 @@ BEGIN
 
 		-- Drop the temp table as always
 		DROP TABLE #TempQ24Placeholder
-
+		*/
 		--Insert questions 22,23, and 25-27 into tblRESPONSE and tblSURVEY_RESPONSE
 		--Store user responses into variables
 		DECLARE @Response_22 varchar(30) = (SELECT Question_22 FROM WK_1 WHERE ResponseID = @RowNum);
@@ -1021,6 +1025,7 @@ BEGIN
 
 		SET @RowNum = @RowNum + 1
 
+		END
 	END
 END
 
