@@ -651,35 +651,31 @@ BEGIN
 
 
 		-- Question 13-17
-		DECLARE @Q13 VARCHAR(30), @Q14 VARCHAR(30), @Q15 VARCHAR(30), @Q16 VARCHAR(30), @Q17 VARCHAR(30)
-		SET @Q13 = (SELECT Question_13 FROM WK_1 WHERE ResponseID = @RowNum)
-		SET @Q14 = (SELECT Question_14 FROM WK_1 WHERE ResponseID = @RowNum)
-		SET @Q15 = (SELECT Question_15 FROM WK_1 WHERE ResponseID = @RowNum)
-		SET @Q16 = (SELECT Question_16 FROM WK_1 WHERE ResponseID = @RowNum)
-		SET @Q17 = (SELECT Question_17 FROM WK_1 WHERE ResponseID = @RowNum)
-		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Q13)
-		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
-		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q13), SCOPE_IDENTITY())
+		DECLARE @Q13_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I find it easier to make friends when we have shared common interests.]'
+		DECLARE @Q14_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I find it hard to make friends at UW.]'
+		DECLARE @Q15_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I initially felt lost coming when I came to UW.]'
+		DECLARE @Q16_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I find it easy to form study groups.]'
+		DECLARE @Q17_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I have a lot of friends from class or study groups.]'
 
-		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)	
-		VALUES(@PersonPK, @ResponseDateTime, @Q14)
-		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
-		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q14), SCOPE_IDENTITY())
+		DECLARE @Q13 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q13_String)
+		DECLARE @Q14 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q14_String)
+		DECLARE @Q15 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q15_String)
+		DECLARE @Q16 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q16_String)
+		DECLARE @Q17 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q17_String)
 
-		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Q15)
-		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
-		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q15), SCOPE_IDENTITY())
-
-		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Q16)
-		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
-		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q16), SCOPE_IDENTITY())
-
-		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Q17)
-		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
+		-- 13-17 Response
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+		VALUES(@PersonPK, @ResponseDateTime, (SELECT Question_13 FROM WK_1 WHERE ResponseID = @RowNum)),
+		(@PersonPK, @ResponseDateTime, (SELECT Question_14 FROM WK_1 WHERE ResponseID = @RowNum)),
+		(@PersonPK, @ResponseDateTime, (SELECT Question_15 FROM WK_1 WHERE ResponseID = @RowNum)),
+		(@PersonPK, @ResponseDateTime, (SELECT Question_16 FROM WK_1 WHERE ResponseID = @RowNum)),
+		(@PersonPK, @ResponseDateTime, (SELECT Question_17 FROM WK_1 WHERE ResponseID = @RowNum))
+		-- 13-17 Survey_Question_Response
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+		VALUES((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q13), SCOPE_IDENTITY()),
+		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q14), SCOPE_IDENTITY()),
+		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q15), SCOPE_IDENTITY()),
+		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q16), SCOPE_IDENTITY()),
 		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q17), SCOPE_IDENTITY())
 
 
