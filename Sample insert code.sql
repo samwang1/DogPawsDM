@@ -660,17 +660,17 @@ BEGIN
 
 		
 		-- Question 13-17
-		DECLARE @Q13_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I find it easier to make friends when we have shared common interests.]'
-		DECLARE @Q14_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I find it hard to make friends at UW.]'
-		DECLARE @Q15_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I initially felt lost coming when I came to UW.]'
-		DECLARE @Q16_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I find it easy to form study groups.]'
-		DECLARE @Q17_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I have a lot of friends from class or study groups.]'
-
-		DECLARE @Q13 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q13_String)
-		DECLARE @Q14 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q14_String)
-		DECLARE @Q15 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q15_String)
-		DECLARE @Q16 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q16_String)
-		DECLARE @Q17 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q17_String)
+		DECLARE @Q13 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I find it easier to make friends when we have shared common interests.]')
+		DECLARE @Q14 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I find it hard to make friends at UW.]')
+		DECLARE @Q15 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I initially felt lost coming when I came to UW.]')
+		DECLARE @Q16 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I find it easy to form study groups.]')
+		DECLARE @Q17 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have a lot of friends from class or study groups.]')
+		
+		PRINT @Q13
+		PRINT @Q14
+		PRINT @Q15
+		PRINT @Q16
+		PRINT @Q17
 
 		-- 13-17 Response
 		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
@@ -679,6 +679,7 @@ BEGIN
 		(@PersonPK, @ResponseDateTime, (SELECT Question_15 FROM WK_1 WHERE ResponseID = @RowNum)),
 		(@PersonPK, @ResponseDateTime, (SELECT Question_16 FROM WK_1 WHERE ResponseID = @RowNum)),
 		(@PersonPK, @ResponseDateTime, (SELECT Question_17 FROM WK_1 WHERE ResponseID = @RowNum))
+
 		-- 13-17 Survey_Question_Response
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 		VALUES((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q13), SCOPE_IDENTITY()),
@@ -768,6 +769,9 @@ BEGIN
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What are some of the programs that you have found helpful in assisting you to find a community at UW? (Select all that apply)');
 		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q_ID);
 		BEGIN
+			
+			PRINT @Q21
+
 			IF @Q21 LIKE '%Advising & Orientation%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
