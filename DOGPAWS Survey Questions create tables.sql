@@ -104,11 +104,10 @@ Create Table tblSTATUS(
 )
 go
 
-
-
 -- alter the table to add with constraints (foreign keys)
 Alter Table tblSURVEY_OBJECTIVE
 Add Constraint fkSurveyIDSO Foreign Key(SurveyID) References tblSURVEY(SurveyID),
     Constraint fkObjectiveID Foreign Key(ObjectiveID) References tblOBJECTIVE(ObjectiveID)
 Alter Table tblSURVEY_STATUS
 Add Constraint fkSurveyIDSS Foreign Key(SurveyID) References tblSURVEY(SurveyID),
+    Constraint fkStatusID Foreign Key(StatusID) References tblSTATUS(StatusID)
