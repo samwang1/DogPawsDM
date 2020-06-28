@@ -32,3 +32,37 @@ DateValue DATE,
 CharValue CHAR,
 NumericValue NUMERIC
 )
+
+-- create Table tblSURVEY_OBJECTIVE
+Create Table tblSURVEY_OBJECTIVE(
+    SurveyObjectiveID int Constraint pkSurveyObjectiveID Primary Key Identity,
+    SurveyID int,
+    ObjectiveID int
+)
+go
+
+-- create Table tblSURVEY_STATUS
+Create Table tblSURVEY_STATUS(
+    SurveyStatusID int Constraint pkSurveyStatusID Primary Key Identity,
+    SurveyID int,
+    StatusID int,
+    BeginDate date
+)
+go
+
+-- create Table tblSTATUS
+Create Table tblSTATUS(
+    StatusID int Constraint pkStatusID Primary Key Identity,
+    StatusName nvarchar(100),
+    StatusDescr nvarchar(100)
+)
+go
+
+
+
+-- alter the table to add with constraints (foreign keys)
+Alter Table tblSURVEY_OBJECTIVE
+Add Constraint fkSurveyIDSO Foreign Key(SurveyID) References tblSURVEY(SurveyID),
+    Constraint fkObjectiveID Foreign Key(ObjectiveID) References tblOBJECTIVE(ObjectiveID)
+Alter Table tblSURVEY_STATUS
+Add Constraint fkSurveyIDSS Foreign Key(SurveyID) References tblSURVEY(SurveyID),
