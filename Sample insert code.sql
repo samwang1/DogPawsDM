@@ -809,7 +809,7 @@ BEGIN
 					PRINT('QUESTION 21')
 				END
 			-- Common User Typed Responses (Other: '')
-			IF @Q21 LIKE '%Class%' OR @Q21 LIKE '%class%'
+			IF @Q21 LIKE '%Class%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Classes')
@@ -818,7 +818,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Work%' OR @Q21 LIKE '%work%'
+			IF @Q21 LIKE '%Work%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Working on or off campus')
@@ -827,7 +827,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Dorm%' OR @Q21 LIKE '%dorm%'
+			IF @Q21 LIKE '%Dorm%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Dorm Life')
@@ -836,7 +836,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Common spaces%' OR @Q21 LIKE '%common spaces%'
+			IF @Q21 LIKE '%Common spaces%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Common gathering areas')
@@ -845,7 +845,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Club%' OR @Q21 LIKE '%club%'
+			IF @Q21 LIKE '%Club%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Joining clubs')
@@ -863,7 +863,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Roommate%' OR @Q21 LIKE '%roommate%'
+			IF @Q21 LIKE '%Roommate%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Roommate search and activities')
@@ -872,7 +872,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			 IF @Q21 LIKE '%RSO%' OR @Q21 LIKE '%Rso%' OR @Q21 LIKE '%rso%'
+			 IF @Q21 LIKE '%RSO%'
 				 BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Joining RSOs')
@@ -881,7 +881,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Website%' OR @Q21 LIKE '%website%'
+			IF @Q21 LIKE '%Website%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Utilizing school websites and resources')
@@ -890,7 +890,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Fair%' OR @Q21 LIKE '%fair%'
+			IF @Q21 LIKE '%Fair%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Attending RSO fairs or other school fairs')
