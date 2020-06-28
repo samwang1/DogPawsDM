@@ -483,7 +483,7 @@ BEGIN
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
-		/*IF @Q8 LIKE '%Having a difficult major%'
+		IF @Q8 LIKE '%Having a difficult major%'
 			BEGIN
 				PRINT('Q8 IF')
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
@@ -492,7 +492,7 @@ BEGIN
 				PRINT(@RespID)
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
-			END */
+			END
 		IF @Q8 LIKE '%Getting into a difficult major%'
 			BEGIN
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
