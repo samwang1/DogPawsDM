@@ -65,8 +65,8 @@ CREATE TABLE tblPERSON(
 	PersonID INT PRIMARY KEY IDENTITY(1,1),
 	Fname varchar(20) NOT NULL,
 	Lname varchar(20) NOT NULL,
-	BirthDate DATE NOT NULL,
-	NetID INT NOT NULL,
+	BirthDate DATE NULL,
+	NetID INT NULL,
 	Email varchar(50)
 )
 
