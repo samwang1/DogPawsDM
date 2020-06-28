@@ -469,6 +469,7 @@ BEGIN
 		PRINT(@Q8)
 		IF @Q8 LIKE '%course load%'
 			BEGIN
+				PRINT(CONCAT('Q8 1, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES(@PersonPK, @ResponseDateTime, 'Course load, homework, assignments')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -477,6 +478,7 @@ BEGIN
 			END
 		IF @Q8 LIKE '%exams%'
 			BEGIN
+				PRINT(CONCAT('Q8 2, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES(@PersonPK, @ResponseDateTime, 'Exams')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -485,6 +487,7 @@ BEGIN
 			END
 		IF @Q8 LIKE '%Having a difficult major%'
 			BEGIN
+				PRINT(CONCAT('Q8 3, ', @RowNum))
 				PRINT('Q8 IF')
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES(@PersonPK, @ResponseDateTime, 'Having a difficult major')
@@ -495,6 +498,7 @@ BEGIN
 			END
 		IF @Q8 LIKE '%Getting into a difficult major%'
 			BEGIN
+				PRINT(CONCAT('Q8 4, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES(@PersonPK, @ResponseDateTime, 'Getting into a difficult major')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -503,6 +507,7 @@ BEGIN
 			END
 		IF @Q8 LIKE '%Making friends%'
 			BEGIN
+				PRINT(CONCAT('Q8 5, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES(@PersonPK, @ResponseDateTime, 'Making friends')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -511,6 +516,7 @@ BEGIN
 			END
 		IF @Q8 LIKE '%Finding a club that fits your interests%'
 			BEGIN
+				PRINT(CONCAT('Q8 6, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES(@PersonPK, @ResponseDateTime, 'Finding a club that fits your interests')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -519,6 +525,7 @@ BEGIN
 			END
 		IF @Q8 LIKE '%Finding community%'
 			BEGIN
+				PRINT(CONCAT('Q8 7, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES(@PersonPK, @ResponseDateTime, 'Finding community')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -527,22 +534,25 @@ BEGIN
 			END
 		IF @Q8 LIKE '%Adapting to living on your own%'
 			BEGIN
+				PRINT(CONCAT('Q8 8, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES(@PersonPK, @ResponseDateTime, 'Adapting to living on your own')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
-
+		PRINT(CONCAT(@Q8, ' end'))
 		-- parse user input response
 
 		/* Q9 */
 		DECLARE @Q9 varchar(max) = (SELECT Question_9 FROM WK_1 WHERE ResponseID = @RowNum)
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'In what ways do you wish you had more support during your first year?')
 		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q_ID)
+		PRINT(@Q9)
 
 		IF @Q9 LIKE '%access to RSOs%'
 			BEGIN
+				PRINT(CONCAT('Q9 1, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES (@PersonPK, @ResponseDateTime, 'Easier access to RSOs and their events throughout the year')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -551,6 +561,7 @@ BEGIN
 			END
 		IF @Q9 LIKE '%commute to campus%'
 			BEGIN
+				PRINT(CONCAT('Q9 2, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES (@PersonPK, @ResponseDateTime, 'Finding someone to commute to campus with')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -559,6 +570,7 @@ BEGIN
 			END
 		IF @Q9 LIKE '%internships%'
 			BEGIN
+				PRINT(CONCAT('Q9 3, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES (@PersonPK, @ResponseDateTime, 'Career development opportunities (i.e. networking, finding internships)')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -567,6 +579,7 @@ BEGIN
 			END	
 		IF @Q9 LIKE '%roommate%'
 			BEGIN
+				PRINT(CONCAT('Q9 4, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES (@PersonPK, @ResponseDateTime, 'Finding a roommate you can get along')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -575,6 +588,7 @@ BEGIN
 			END
 		IF @Q9 LIKE '%community%'
 			BEGIN
+				PRINT(CONCAT('Q9 5, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES (@PersonPK, @ResponseDateTime, 'Developing a community')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -583,6 +597,7 @@ BEGIN
 			END
 		IF @Q9 LIKE '%study groups%'
 			BEGIN
+			PRINT(CONCAT('Q9 6, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES (@PersonPK, @ResponseDateTime, 'Creating study groups')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -591,6 +606,7 @@ BEGIN
 			END
 		IF @Q9 LIKE '%connections%'
 			BEGIN
+				PRINT(CONCAT('Q9 7, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES (@PersonPK, @ResponseDateTime, 'Making connections during class')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -599,6 +615,7 @@ BEGIN
 			END
 		IF @Q9 LIKE '%academic resources%'
 			BEGIN
+				PRINT(CONCAT('Q9 8, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES (@PersonPK, @ResponseDateTime, 'Knowing what academic resources are available')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -607,6 +624,7 @@ BEGIN
 			END
 		IF @Q9 LIKE '%research%'
 			BEGIN
+			PRINT(CONCAT('Q9 9, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES (@PersonPK, @ResponseDateTime, 'Finding research opportunities')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
@@ -615,12 +633,14 @@ BEGIN
 			END
 		IF @Q9 LIKE '%majors%'
 			BEGIN
+				PRINT(CONCAT('Q9 10, ', @RowNum))
 				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 				VALUES (@PersonPK, @ResponseDateTime, 'Exploring different majors')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
+			PRINT(CONCAT(@Q9, ' end'))
 
 		-- insert the question index into survey_question_response	
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
@@ -660,17 +680,17 @@ BEGIN
 
 		
 		-- Question 13-17
-		DECLARE @Q13 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I find it easier to make friends when we have shared common interests.]')
-		DECLARE @Q14 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I find it hard to make friends at UW.]')
-		DECLARE @Q15 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I initially felt lost coming when I came to UW.]')
-		DECLARE @Q16 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I find it easy to form study groups.]')
-		DECLARE @Q17 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have a lot of friends from class or study groups.]')
-		
-		PRINT @Q13
-		PRINT @Q14
-		PRINT @Q15
-		PRINT @Q16
-		PRINT @Q17
+		DECLARE @Q13_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I find it easier to make friends when we have shared common interests.]'
+		DECLARE @Q14_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I find it hard to make friends at UW.]'
+		DECLARE @Q15_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I initially felt lost coming when I came to UW.]'
+		DECLARE @Q16_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I find it easy to form study groups.]'
+		DECLARE @Q17_String VARCHAR(500) = 'Rate your level of agreement with the following statements: [I have a lot of friends from class or study groups.]'
+
+		DECLARE @Q13 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q13_String)
+		DECLARE @Q14 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q14_String)
+		DECLARE @Q15 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q15_String)
+		DECLARE @Q16 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q16_String)
+		DECLARE @Q17 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q17_String)
 
 		-- 13-17 Response
 		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
@@ -679,7 +699,6 @@ BEGIN
 		(@PersonPK, @ResponseDateTime, (SELECT Question_15 FROM WK_1 WHERE ResponseID = @RowNum)),
 		(@PersonPK, @ResponseDateTime, (SELECT Question_16 FROM WK_1 WHERE ResponseID = @RowNum)),
 		(@PersonPK, @ResponseDateTime, (SELECT Question_17 FROM WK_1 WHERE ResponseID = @RowNum))
-
 		-- 13-17 Survey_Question_Response
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 		VALUES((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q13), SCOPE_IDENTITY()),
@@ -769,9 +788,6 @@ BEGIN
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What are some of the programs that you have found helpful in assisting you to find a community at UW? (Select all that apply)');
 		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q_ID);
 		BEGIN
-			
-			PRINT @Q21
-
 			IF @Q21 LIKE '%Advising & Orientation%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
@@ -809,7 +825,7 @@ BEGIN
 					PRINT('QUESTION 21')
 				END
 			-- Common User Typed Responses (Other: '')
-			IF @Q21 LIKE '%Class%'
+			IF @Q21 LIKE '%Class%' OR @Q21 LIKE '%class%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Classes')
@@ -818,7 +834,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Work%'
+			IF @Q21 LIKE '%Work%' OR @Q21 LIKE '%work%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Working on or off campus')
@@ -827,7 +843,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Dorm%'
+			IF @Q21 LIKE '%Dorm%' OR @Q21 LIKE '%dorm%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Dorm Life')
@@ -836,7 +852,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Common spaces%'
+			IF @Q21 LIKE '%Common spaces%' OR @Q21 LIKE '%common spaces%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Common gathering areas')
@@ -845,7 +861,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Club%'
+			IF @Q21 LIKE '%Club%' OR @Q21 LIKE '%club%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Joining clubs')
@@ -863,7 +879,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Roommate%'
+			IF @Q21 LIKE '%Roommate%' OR @Q21 LIKE '%roommate%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Roommate search and activities')
@@ -872,7 +888,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			 IF @Q21 LIKE '%RSO%'
+			 IF @Q21 LIKE '%RSO%' OR @Q21 LIKE '%Rso%' OR @Q21 LIKE '%rso%'
 				 BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Joining RSOs')
@@ -881,7 +897,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Website%'
+			IF @Q21 LIKE '%Website%' OR @Q21 LIKE '%website%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Utilizing school websites and resources')
@@ -890,7 +906,7 @@ BEGIN
 					VALUES(@SQ_ID, @RespID)
 					PRINT('QUESTION 21')
 				END
-			IF @Q21 LIKE '%Fair%'
+			IF @Q21 LIKE '%Fair%' OR @Q21 LIKE '%fair%'
 				BEGIN
 					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 					VALUES (@PersonPK, @ResponseDateTime, 'Attending RSO fairs or other school fairs')
