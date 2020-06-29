@@ -132,19 +132,10 @@ EXEC uspInsertFromCSV @SurveyName = 'DogPaws Interest Survey'
 
 GO
 ALTER PROC uspInsertFromCSV
-@SurveyName varchar(100)--,
---@LastPull DateTime -- time of most recent .csv download
+@SurveyName varchar(100)
 AS
 BEGIN
-	DECLARE @RowNum INT = 1--(SELECT TOP 1 ResponseID FROM tblRESPONSE ORDER BY ResponseID DESC) -- most recent response time
-	IF @RowNum IS NULL
-		BEGIN
-			SET @RowNum = 1
-		END
-	ELSE
-		BEGIN
-			SET @RowNum = @RowNum + 1
-		END
+	DECLARE @RowNum INT = 1
 
 	DECLARE @TotalRows INT = (SELECT COUNT(*) FROM WK_1)
 	DECLARE @F varchar(50), @L varchar(50), @Email varchar(100), @Temp varchar(100)
@@ -642,9 +633,6 @@ BEGIN
 			END
 			PRINT(CONCAT(@Q9, ' end'))
 
-		-- insert the question index into survey_question_response	
-		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
-	    VALUES(@SQ_ID, @RowNum)
 
 		/* Insert response for question 10 - 12 */
 		DECLARE @Question_10 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I had a hard time finding a group that I feel I belong to.]');
@@ -1068,8 +1056,15 @@ BEGIN
  
 
 		/* Q33 */
+		PRINT('QUESTION 33')
+		IF @Temp IS NULL
+			BEGIN
+				SET @Temp = 'anon'
+			END
+
 		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
 		VALUES (@PersonPK, @ResponseDateTime, @Temp)
+		PRINT(@Temp)
 		SET @RespID = SCOPE_IDENTITY()
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION
 			WHERE QuestionName = 'Additionally, please leave your preferred first and last name here if you answered yes to either of the first two questions asked on this page (format: Harry Husky):')
@@ -1077,7 +1072,7 @@ BEGIN
 									WHERE SurveyID = @SurveyID AND QuestionID = @Q_ID)
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 		VALUES(@SurvQuestID, @RespID)
-		PRINT('QUESTION 33')
+		
 
 		SET @RowNum = @RowNum + 1
 
