@@ -156,3 +156,8 @@ Alter Table tblSURVEY_STATUS
 Add Constraint fkSurveyIDSS Foreign Key(SurveyID) References tblSURVEY(SurveyID),
     Constraint fkStatusID Foreign Key(StatusID) References tblSTATUS(StatusID)
 
+INSERT INTO tblDETAIL_TYPE(DetailTypeName)
+VALUES('student year'), ('resident status'), ('housing status');
+
+INSERT INTO tblSURVEY_TYPE(SurveyTypeName, SurveyTypeDescr)
+VALUES('Interest', 'Initial DogPaws Interest Survey')

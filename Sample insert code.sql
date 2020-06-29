@@ -1,6 +1,4 @@
-USE DOGPAWS_Surveys_Temp /* USE KEEPER_DogPawsDM_Testing */
-
-USE DOGPAWS_TEST
+USE DOGPAWS_Surveys
 SELECT * FROM WK_1
 
 INSERT INTO tblSURVEY(SurveyName, SurveyBeginDate, SurveyEndDate, SurveyTypeID)
@@ -131,7 +129,7 @@ INSERT INTO tblSURVEY_QUESTION (SurveyID, QuestionID, QuestionNumber)
 EXEC uspInsertFromCSV @SurveyName = 'DogPaws Interest Survey'
 
 GO
-ALTER PROC uspInsertFromCSV
+CREATE PROC uspInsertFromCSV
 @SurveyName varchar(100)
 AS
 BEGIN
