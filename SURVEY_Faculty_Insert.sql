@@ -34,8 +34,10 @@ INSERT INTO tblQUESTION(QuestionTypeID, QuestionName)
 VALUES -- start with q3 bc q1 (timestamp) and q2 (email) can be reused
 	(@MC, 'What is your title during the 2020-2021 school year?'), -- q3
 
+	(@MC, 'How long have you been working in academia?'), -- q5
 	(@MC, 'How long have you been working at UW?'), -- q6
 
+	(@MC, 'How do you recruit students for your projects?'), -- q12
 	(@MC, 'What education levels do the students who work on your projects have?') -- q13
 
 
@@ -43,12 +45,14 @@ DECLARE @Question_1 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName
 DECLARE @Question_2 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Email')
 DECLARE @Question_3 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What is your title during the 2020-2021 school year?')
 
+DECLARE @Question_5 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working in academia?')
 DECLARE @Question_6 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working at UW?')
 
 DECLARE @Question_7 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in my department')
 DECLARE @Question_8 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in the UW community')
 DECLARE @Question_9 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in the academic community as a whole')
 
+DECLARE @Question_12 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How do you recruit students for your projects?')
 DECLARE @Question_13 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What education levels do the students who work on your projects have?')
 
 
@@ -60,10 +64,13 @@ VALUES
 	(@SurvID, @Question_2, 2),
 	(@SurvID, @Question_3, 3),
 
+	(@SurvID, @Question_5, 5),
 	(@SurvID, @Question_6, 6),
 	(@SurvID, @Question_7, 7),
 	(@SurvID, @Question_8, 8),
 	(@SurvID, @Question_9, 9),
+
+	(@SurvID, @Question_12, 12),
 	(@SurvID, @Question_13, 13)
 
 
@@ -158,6 +165,92 @@ BEGIN
 		SET @D_ID = SCOPE_IDENTITY()
 		INSERT INTO tblPERSON_DETAIL(PersonID, DetailID)
 		VALUES(@PersonPK, @D_ID)
+
+
+		/****** questions 5 & 12 ******/
+		DECLARE @SQ_ID INT, @R_ID INT, @Q5 varchar(500), @Q5_ID INT, @Q12 varchar(MAX), @Q12_ID INT
+		SET @Q5_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working in academia?')
+
+		-- QUESTION 5
+		SET @Q5 = (SELECT Question_5 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+		 
+		  -- insert into tblResponse
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+		VALUES(@PersonPK, @ResponseDateTime, @Q5)
+
+		  -- insert into tblSQR
+		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q5_ID)
+		SET @R_ID = (SELECT SCOPE_IDENTITY())
+
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+		VALUES(@SQ_ID, @R_ID)
+
+		  -- insert into tblDetail
+		SET @DT_ID = (SELECT DetailTypeID FROM tblDETAIL_TYPE WHERE DetailTypeName = 'Faculty Experience')
+		
+		INSERT INTO tblDETAIL(DetailName, DetailTypeID)
+		VALUES(@Q5, @DT_ID)
+
+		  -- insert into tblPersonDetail
+		SET @D_ID = (SELECT SCOPE_IDENTITY())
+
+		INSERT INTO tblPERSON_DETAIL(PersonID, DetailID)
+		VALUES(@PersonPK, @D_ID)
+
+		-- QUESTION 12
+		SET @Q12_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How do you recruit students for your projects?')
+		SET @Q12 = (SELECT Question_12 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q12_ID)
+
+		IF @Q12 LIKE '%Undergraduate Research Center%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Undergraduate Research Center')
+
+				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+				VALUES(@SQ_ID, SCOPE_IDENTITY())
+			END
+		IF @Q12 LIKE '%Handshake%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Handshake')
+
+				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+				VALUES(@SQ_ID, SCOPE_IDENTITY())
+			END
+		IF @Q12 LIKE '%Postings on your website%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Postings on your website')
+
+				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+				VALUES(@SQ_ID, SCOPE_IDENTITY())
+			END
+		IF @Q12 LIKE '%Through recommendations of other professors%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Through recommendations of other professors')
+
+				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+				VALUES(@SQ_ID, SCOPE_IDENTITY())
+			END
+		IF @Q12 LIKE '%Advertising your projects in class%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Advertising your projects in class')
+
+				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+				VALUES(@SQ_ID, SCOPE_IDENTITY())
+			END
+		IF @Q12 LIKE '%N/A (Do not have projects currently)%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'N/A (Do not have projects currently)')
+
+				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+				VALUES(@SQ_ID, SCOPE_IDENTITY())
+			END
+		/****** end questions 5 & 12 ******/
 
 
 		/******* Insert for Question 6 & 13 ********/
