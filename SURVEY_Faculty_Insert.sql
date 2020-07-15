@@ -22,6 +22,7 @@ GO
 -- Survey Result
 SELECT * FROM SURVEY_Faculty
 
+Select * From SURVEY_Faculty
 
 /* *** Inserts into tblQUESTION */
 DECLARE @MC INT = (SELECT QuestionTypeID FROM tblQUESTION_TYPE WHERE QuestionTypeName = 'Multiple choice')
@@ -38,7 +39,11 @@ VALUES -- start with q3 bc q1 (timestamp) and q2 (email) can be reused
 	(@MC, 'How long have you been working at UW?'), -- q6
 
 	(@MC, 'How do you recruit students for your projects?'), -- q12
-	(@MC, 'What education levels do the students who work on your projects have?') -- q13
+	(@MC, 'What education levels do the students who work on your projects have?'), -- q13
+
+	(@ShortAns, 'What impact do you think a platform that facilitates stronger connections between faculty and students would have on the UW community?'), --q15
+	(@ShortAns, 'What comments or advice do you have about this project?'), --q16
+	(@MC, 'Would you be willing to participate in a 30-minute interview with researchers from the DogPaws team?') --q17
 
 
 DECLARE @Question_1 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Timestamp')
@@ -54,6 +59,10 @@ DECLARE @Question_9 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName
 
 DECLARE @Question_12 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How do you recruit students for your projects?')
 DECLARE @Question_13 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What education levels do the students who work on your projects have?')
+
+DECLARE @Question_15 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What impact do you think a platform that facilitates stronger connections between faculty and students would have on the UW community?')
+DECLARE @Question_16 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What comments or advice do you have about this project?')
+DECLARE @Question_17 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Would you be willing to participate in a 30-minute interview with researchers from the DogPaws team?')
 
 
 /* *** Inserts into tblSURVEY_QUESTION */
@@ -71,7 +80,11 @@ VALUES
 	(@SurvID, @Question_9, 9),
 
 	(@SurvID, @Question_12, 12),
-	(@SurvID, @Question_13, 13)
+	(@SurvID, @Question_13, 13),
+
+	(@SurvID, @Question_15, 15),
+	(@SurvID, @Question_16, 16),
+	(@SurvID, @Question_17, 17)
 
 
 
@@ -379,5 +392,44 @@ BEGIN
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
 		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_8), SCOPE_IDENTITY())
 
+
+	--Inserts for question 15-17
+		--Declare QuestionID's and Responses
+		DECLARE @Question_15 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What impact do you think a platform that facilitates stronger connections between faculty and students would have on the UW community?')
+		DECLARE @Q15_Response varchar(50) = (SELECT Question_15 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+
+		DECLARE @Question_16 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What comments or advice do you have about this project?')
+		DECLARE @Q16_Response varchar(50) = (SELECT Question_16 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+
+		DECLARE @Question_17 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Would you be willing to participate in a 30-minute interview with researchers from the DogPaws team?')
+		DECLARE @Q17_Response varchar(50) = (SELECT Question_17 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+
+		--Insert Into tblRESPONSE and tblSURVEY_QUESTION_RESPONSE
+		--Question 15
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
+			(@PersonPK, @ResponseDateTime, @Q15_Response)
+
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
+			((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_15), SCOPE_IDENTITY())
+
+		--Question 16
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
+			(@PersonPK, @ResponseDateTime, @Q16_Response)
+
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
+			((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_16), SCOPE_IDENTITY())
+
+		--Question 17
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
+			(@PersonPK, @ResponseDateTime, @Q17_Response)
+
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
+			((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_17), SCOPE_IDENTITY())
+
+
 	END -- end while loop
 END -- end proc
+
+Select * From tblRESPONSE
+Select * From tblSURVEY_QUESTION
+Select * From tblSURVEY_QUESTION_RESPONSE
