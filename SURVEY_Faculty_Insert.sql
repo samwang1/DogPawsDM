@@ -1,7 +1,7 @@
 /* Insert Faculty Survey CSV */
 
 /* Setup (do once only)
-
+USE DogPaws_Test
 SELECT * FROM SURVEY_Faculty
 
 ALTER TABLE SURVEY_Faculty
@@ -34,7 +34,7 @@ DECLARE @Ranking INT = (SELECT QuestionTypeID FROM tblQUESTION_TYPE WHERE Questi
 INSERT INTO tblQUESTION(QuestionTypeID, QuestionName)
 VALUES -- start with q3 bc q1 (timestamp) and q2 (email) can be reused
 	(@MC, 'What is your title during the 2020-2021 school year?'), -- q3
-
+	(@MC, 'What college do you work for?'), -- q4
 	(@MC, 'How long have you been working in academia?'), -- q5
 	(@MC, 'How long have you been working at UW?'), -- q6
 
@@ -49,7 +49,7 @@ VALUES -- start with q3 bc q1 (timestamp) and q2 (email) can be reused
 DECLARE @Question_1 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Timestamp')
 DECLARE @Question_2 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Email')
 DECLARE @Question_3 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What is your title during the 2020-2021 school year?')
-
+DECLARE @Question_4 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What college do you work for?')
 DECLARE @Question_5 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working in academia?')
 DECLARE @Question_6 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working at UW?')
 
@@ -72,7 +72,7 @@ VALUES
 	(@SurvID, @Question_1, 1),
 	(@SurvID, @Question_2, 2),
 	(@SurvID, @Question_3, 3),
-
+	(@SurvID, @Question_4, 4),
 	(@SurvID, @Question_5, 5),
 	(@SurvID, @Question_6, 6),
 	(@SurvID, @Question_7, 7),
@@ -113,7 +113,7 @@ BEGIN
 						JOIN tblSURVEY_QUESTION_RESPONSE SQR ON R.ResponseID = SQR.ResponseID
 						JOIN tblSURVEY_QUESTION SQ ON SQR.SurveyQuestionID = SQ.SurveyQuestionID
 						JOIN tblSURVEY S ON SQ.SurveyID = S.SurveyID
-							WHERE Email = @Email AND S.SurveyID = @SurveyID) -- person who has taken this specific survey
+							WHERE P.Email = @Email AND S.SurveyID = @SurveyID) -- person who has taken this specific survey
 			BEGIN
 				INSERT INTO tblPERSON(Fname, Lname, Email)
 				VALUES('anon', 'anon', @Email)
@@ -210,7 +210,76 @@ BEGIN
 		INSERT INTO tblPERSON_DETAIL(PersonID, DetailID)
 		VALUES(@PersonPK, @D_ID)
 
-		-- QUESTION 12
+
+		/****** end questions 5 & 12 ******/
+
+
+		/******* Insert for Question 6 & 13 ********/
+
+		-- For question 6
+		DECLARE @Question_6 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working at UW?');
+		DECLARE @Q6_Resp varchar(50) = (SELECT Question_6 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+
+		-- Insert into tblRESPONSE
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
+		(@PersonPK, @ResponseDateTime, @Q6_Resp)
+
+		-- Insert into tblSURVEY_QUESTION_RESPONSE
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
+		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_6), SCOPE_IDENTITY())
+
+		-- Insert into tblDETAIL and tblPERSON_DETAIL
+		SET @DT_ID = (SELECT DetailTypeID FROM tblDETAIL_TYPE WHERE DetailTypeName = 'Faculty UW Experience')
+
+		INSERT INTO tblDETAIL(DetailName, DetailTypeID)
+		VALUES(@Q6_Resp, @DT_ID)
+
+		INSERT INTO tblPERSON_DETAIL(PersonID, DetailID)
+		VALUES(@PersonPK, SCOPE_IDENTITY())
+
+
+		
+-- insert question for 7-9
+-- For question 7
+		DECLARE @Question_7 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in my department');
+		DECLARE @Q7_Resp varchar(50) = (SELECT Question_7 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+
+		-- Insert into tblRESPONSE
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
+		(@PersonPK, @ResponseDateTime, @Q7_Resp)
+
+		-- Insert into tblSURVEY_QUESTION_RESPONSE
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
+		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_7), SCOPE_IDENTITY())
+
+
+-- For question 8
+		DECLARE @Question_8 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in the UW community');
+		DECLARE @Q8_Resp varchar(50) = (SELECT Question_8 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+
+		-- Insert into tblRESPONSE
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
+		(@PersonPK, @ResponseDateTime, @Q8_Resp)
+
+		-- Insert into tblSURVEY_QUESTION_RESPONSE
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
+		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_8), SCOPE_IDENTITY())
+
+
+-- For question 9
+		DECLARE @Question_9 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in the academic community as a whole');
+		DECLARE @Q9_Resp varchar(50) = (SELECT Question_9 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+
+		-- Insert into tblRESPONSE
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
+		(@PersonPK, @ResponseDateTime, @Q8_Resp)
+
+		-- Insert into tblSURVEY_QUESTION_RESPONSE
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
+		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_8), SCOPE_IDENTITY())
+
+
+				-- QUESTION 12
 		SET @Q12_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How do you recruit students for your projects?')
 		SET @Q12 = (SELECT Question_12 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
 		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q12_ID)
@@ -263,31 +332,6 @@ BEGIN
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, SCOPE_IDENTITY())
 			END
-		/****** end questions 5 & 12 ******/
-
-
-		/******* Insert for Question 6 & 13 ********/
-
-		-- For question 6
-		DECLARE @Question_6 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working at UW?');
-		DECLARE @Q6_Resp varchar(50) = (SELECT Question_6 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
-
-		-- Insert into tblRESPONSE
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
-		(@PersonPK, @ResponseDateTime, @Q6_Resp)
-
-		-- Insert into tblSURVEY_QUESTION_RESPONSE
-		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
-		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_6), SCOPE_IDENTITY())
-
-		-- Insert into tblDETAIL and tblPERSON_DETAIL
-		SET @DT_ID = (SELECT DetailTypeID FROM tblDETAIL_TYPE WHERE DetailTypeName = 'Faculty UW Experience')
-
-		INSERT INTO tblDETAIL(DetailName, DetailTypeID)
-		VALUES(@Q6_Resp, @DT_ID)
-
-		INSERT INTO tblPERSON_DETAIL(PersonID, DetailID)
-		VALUES(@PersonPK, SCOPE_IDENTITY())
 
 		-- For question 13
 		DECLARE @Question_13 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What education levels do the students who work on your projects have?');
@@ -352,45 +396,6 @@ BEGIN
 			END
 
 
-
--- insert question for 7-9
--- For question 7
-		DECLARE @Question_7 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in my department');
-		DECLARE @Q7_Resp varchar(50) = (SELECT Question_7 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
-
-		-- Insert into tblRESPONSE
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
-		(@PersonPK, @ResponseDateTime, @Q7_Resp)
-
-		-- Insert into tblSURVEY_QUESTION_RESPONSE
-		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
-		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_7), SCOPE_IDENTITY())
-
-
--- For question 8
-		DECLARE @Question_8 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in the UW community');
-		DECLARE @Q8_Resp varchar(50) = (SELECT Question_8 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
-
-		-- Insert into tblRESPONSE
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
-		(@PersonPK, @ResponseDateTime, @Q8_Resp)
-
-		-- Insert into tblSURVEY_QUESTION_RESPONSE
-		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
-		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_8), SCOPE_IDENTITY())
-
-
--- For question 9
-		DECLARE @Question_9 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in the academic community as a whole');
-		DECLARE @Q9_Resp varchar(50) = (SELECT Question_9 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
-
-		-- Insert into tblRESPONSE
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
-		(@PersonPK, @ResponseDateTime, @Q8_Resp)
-
-		-- Insert into tblSURVEY_QUESTION_RESPONSE
-		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
-		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_8), SCOPE_IDENTITY())
 
 
 	--Inserts for question 15-17
