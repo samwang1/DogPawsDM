@@ -211,11 +211,6 @@ BEGIN
 		VALUES(@PersonPK, @D_ID)
 
 
-		/****** end questions 5 & 12 ******/
-
-
-		/******* Insert for Question 6 & 13 ********/
-
 		-- For question 6
 		DECLARE @Question_6 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working at UW?');
 		DECLARE @Q6_Resp varchar(50) = (SELECT Question_6 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
