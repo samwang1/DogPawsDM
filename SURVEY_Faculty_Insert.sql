@@ -6,7 +6,7 @@ SELECT * FROM SURVEY_Faculty
 
 ALTER TABLE SURVEY_Faculty
 ADD ResponseID INT PRIMARY KEY IDENTITY(1,1)
-r
+
 INSERT INTO tblSURVEY_TYPE(SurveyTypeName, SurveyTypeDescr)
 VALUES('Faculty', 'Faculty Survey')
 INSERT INTO tblSURVEY(SurveyName, SurveyBeginDate, SurveyEndDate, SurveyTypeID)
@@ -16,13 +16,11 @@ INSERT INTO tblDETAIL_TYPE(DetailTypeName)
 VALUES('Faculty Title'), ('Faculty College'), ('Faculty Total Experience'), ('Faculty UW Experience')
 */
 
-USE DOGPAWS_Test
+USE DOGPAWS_Surveys
 GO
 
 -- Survey Result
 SELECT * FROM SURVEY_Faculty
-
-Select * From SURVEY_Faculty
 
 /* *** Inserts into tblQUESTION */
 DECLARE @MC INT = (SELECT QuestionTypeID FROM tblQUESTION_TYPE WHERE QuestionTypeName = 'Multiple choice')
@@ -37,13 +35,14 @@ VALUES -- start with q3 bc q1 (timestamp) and q2 (email) can be reused
 	(@MC, 'What college do you work for?'), -- q4
 	(@MC, 'How long have you been working in academia?'), -- q5
 	(@MC, 'How long have you been working at UW?'), -- q6
-
+	(@LikertScale, 'My projects are widely acknowledged in my department'), -- q7
+	(@LikertScale, 'My projects are widely acknowledged in the UW community'), -- q8
+	(@LikertScale, 'My projects are widely acknowledged in the academic community as a whole'), -- q9
 	(@MC, 'I feel connected with my students'), -- q10
 	(@MC, 'I often collaborate with other faculty members on projects or initiatives'), -- q11
 	(@MC, 'How do you recruit students for your projects?'), -- q12
 	(@MC, 'What education levels do the students who work on your projects have?'), -- q13
 	(@ShortAns, 'DogPaws aims to create an online community that allows UW students, professors, and alumni to have stronger connections. What features would you expect to see and would be willing to use?'), -- q14
-
 	(@ShortAns, 'What impact do you think a platform that facilitates stronger connections between faculty and students would have on the UW community?'), --q15
 	(@ShortAns, 'What comments or advice do you have about this project?'), --q16
 	(@MC, 'Would you be willing to participate in a 30-minute interview with researchers from the DogPaws team?') --q17
@@ -97,7 +96,7 @@ VALUES
 /* ************************************************************* */
 
 
-
+EXEC uspInsertFacultySurveyCSV
 
 GO
 CREATE PROC uspInsertFacultySurveyCSV
@@ -216,6 +215,7 @@ BEGIN
 
 
 		-- For question 6
+		PRINT('q6')
 		DECLARE @Question_6 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working at UW?');
 		DECLARE @Q6_Resp varchar(50) = (SELECT Question_6 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
 
