@@ -699,6 +699,7 @@ BEGIN
 		(@PersonPK, @ResponseDateTime, (SELECT Question_15 FROM WK_1 WHERE ResponseID = @RowNum)),
 		(@PersonPK, @ResponseDateTime, (SELECT Question_16 FROM WK_1 WHERE ResponseID = @RowNum)),
 		(@PersonPK, @ResponseDateTime, (SELECT Question_17 FROM WK_1 WHERE ResponseID = @RowNum))
+
 		-- 13-17 Survey_Question_Response
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 		VALUES((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q13), SCOPE_IDENTITY()),
