@@ -38,8 +38,11 @@ VALUES -- start with q3 bc q1 (timestamp) and q2 (email) can be reused
 	(@MC, 'How long have you been working in academia?'), -- q5
 	(@MC, 'How long have you been working at UW?'), -- q6
 
+	(@MC, 'I feel connected with my students'), -- q10
+	(@MC, 'I often collaborate with other faculty members on projects or initiatives'), -- q11
 	(@MC, 'How do you recruit students for your projects?'), -- q12
 	(@MC, 'What education levels do the students who work on your projects have?'), -- q13
+	(@ShortAns, 'DogPaws aims to create an online community that allows UW students, professors, and alumni to have stronger connections. What features would you expect to see and would be willing to use?'), -- q14
 
 	(@ShortAns, 'What impact do you think a platform that facilitates stronger connections between faculty and students would have on the UW community?'), --q15
 	(@ShortAns, 'What comments or advice do you have about this project?'), --q16
@@ -52,14 +55,14 @@ DECLARE @Question_3 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName
 DECLARE @Question_4 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What college do you work for?')
 DECLARE @Question_5 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working in academia?')
 DECLARE @Question_6 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working at UW?')
-
 DECLARE @Question_7 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in my department')
 DECLARE @Question_8 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in the UW community')
 DECLARE @Question_9 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'My projects are widely acknowledged in the academic community as a whole')
-
+DECLARE @Question_10 INT = (SELECT QuestionID FROM tblQuestion WHERE QuestionName = 'I feel connected with my students')
+DECLARE @Question_11 INT = (SELECT QuestionID FROM tblQuestion WHERE QuestionName = 'I often collaborate with other faculty members on projects or initiatives')
 DECLARE @Question_12 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How do you recruit students for your projects?')
 DECLARE @Question_13 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What education levels do the students who work on your projects have?')
-
+DECLARE @Question_14 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'DogPaws aims to create an online community that allows UW students, professors, and alumni to have stronger connections. What features would you expect to see and would be willing to use?')
 DECLARE @Question_15 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What impact do you think a platform that facilitates stronger connections between faculty and students would have on the UW community?')
 DECLARE @Question_16 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'What comments or advice do you have about this project?')
 DECLARE @Question_17 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Would you be willing to participate in a 30-minute interview with researchers from the DogPaws team?')
@@ -78,10 +81,11 @@ VALUES
 	(@SurvID, @Question_7, 7),
 	(@SurvID, @Question_8, 8),
 	(@SurvID, @Question_9, 9),
-
+	(@SurvID, @Question_10, 10),
+	(@SurvID, @Question_11, 11),
 	(@SurvID, @Question_12, 12),
 	(@SurvID, @Question_13, 13),
-
+	(@SurvID, @Question_14, 14),
 	(@SurvID, @Question_15, 15),
 	(@SurvID, @Question_16, 16),
 	(@SurvID, @Question_17, 17)
@@ -273,6 +277,29 @@ BEGIN
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
 		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_8), SCOPE_IDENTITY())
 
+-- QUESTION 10 --
+		DECLARE @Question_10 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'I feel connected with my students');
+		DECLARE @Q10_Resp varchar(50) = (SELECT Question_10 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+
+		-- Insert into tblRESPONSE
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
+		(@PersonPK, @ResponseDateTime, @Q10_Resp)
+
+		-- Insert into tblSURVEY_QUESTION_RESPONSE
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
+		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_10), SCOPE_IDENTITY())
+
+-- QUESTION 11 --
+		DECLARE @Question_11 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'I often collaborate with other faculty members on projects or initiatives');
+		DECLARE @Q11_Resp varchar(50) = (SELECT Question_11 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+
+		-- Insert into tblRESPONSE
+		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
+		(@PersonPK, @ResponseDateTime, @Q11_Resp)
+
+		-- Insert into tblSURVEY_QUESTION_RESPONSE
+		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
+		((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_11), SCOPE_IDENTITY())
 
 				-- QUESTION 12
 		SET @Q12_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How do you recruit students for your projects?')
@@ -390,7 +417,43 @@ BEGIN
 				VALUES(@Q13_SQID, SCOPE_IDENTITY())
 			END
 
+-- QUESTION 14 --
+		DECLARE @Question_14 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'DogPaws aims to create an online community that allows UW students, professors, and alumni to have stronger connections. What features would you expect to see and would be willing to use?')
+		DECLARE @Q14_Resp varchar(MAX) = (SELECT Question_14 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+		DECLARE @Q14_SQID int = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_14)
+		IF @Q14_Resp LIKE '%Contact other professors%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Contact other professors')
 
+				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+				VALUES(@Q14_SQID, SCOPE_IDENTITY())
+			END
+		IF @Q14_Resp LIKE '%Find great students/researchers for my research%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Find great students/researchers for my research')
+
+				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+				VALUES(@Q14_SQID, SCOPE_IDENTITY())
+			END
+		IF @Q14_Resp LIKE '%Show off my work and accomplishments%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Show off my work and accomplishments')
+
+				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+				VALUES(@Q14_SQID, SCOPE_IDENTITY())
+			END
+		IF @Q14_Resp LIKE '%Scheduling office hours and one-on-ones%'
+			BEGIN
+				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
+				VALUES (@PersonPK, @ResponseDateTime, 'Scheduling office hours and one-on-ones')
+
+				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
+				VALUES(@Q14_SQID, SCOPE_IDENTITY())
+			END
+		-- Add extra/other responses possibly.
 
 
 	--Inserts for question 15-17
@@ -403,6 +466,7 @@ BEGIN
 
 		DECLARE @Question_17 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Would you be willing to participate in a 30-minute interview with researchers from the DogPaws team?')
 		DECLARE @Q17_Response varchar(50) = (SELECT Question_17 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
+
 
 		--Insert Into tblRESPONSE and tblSURVEY_QUESTION_RESPONSE
 		--Question 15
