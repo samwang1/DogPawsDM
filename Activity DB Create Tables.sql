@@ -2,8 +2,6 @@
 Create Table tblBUILDING(
 	BuildingID int Primary Key Identity Not Null,
 	BuildingeName varchar(100) Not Null,
-    ActivityID int Not Null,
-    Constraint fkActivityID Foreign Key (ActivityID) References tblACTVITY(ActivityID)
 );
 
 Go
