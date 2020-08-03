@@ -7,7 +7,9 @@ CREATE TABLE tblCHARACTERISTIC (
 
 CREATE TABLE tblPROFILE (
 	ProfileID INT primary key identity(1,1),
-	ProfName varchar(500) NULL,
+	Fname varchar(500) NULL,
+	Lname varchar(500) NULL,
+	Email varchar(500) NULL,
 	ProfDescr varchar(500) NULL
 )
 
@@ -17,20 +19,31 @@ CREATE TABLE tblPROFILE_CHARACTERISTIC (
 	ProfID INT foreign key references tblPROFILE(ProfileID) NOT NULL
 )
 
+/*
+
+CREATE TABLE tblPROFILE_TYPE (
+	ProfTypeID INT PRIMARY KEY IDENTITY(1,1),
+	ProfTypeName varchar(30) NOT NULL,
+	ProfTypeDesc varchar(500)
+)
+
+*/
  -- section 2
-Create Table tblBUILDING(
-	BuildingID int Primary Key Identity Not Null,
-	BuildingeName varchar(100) Not Null,
+
+Create Table tblLOCATION(
+	LocationID int Primary Key Identity Not Null,
+	LocationName varchar(50) Not Null,
+	LocationDesc varchar(500)
 );
 
-Go
- Create Table tblLOCATION(
-	LocationID int Primary Key Identity Not Null,
-	LocationName varchar(100) Not Null,
-	BuildingID int Not Null,
-	Constraint fktblBuilding Foreign Key (BuildingID) References tblBUILDING(BuildingID)
+Create Table tblBUILDING(
+	BuildingID int Primary Key Identity(1,1),
+	LocationID INT FOREIGN KEY REFERENCES tblLOCATION(LocationID),
+	BuildingName varchar(50) Not Null,
+	BuildingDesc varchar(500),
+	BuildingShortName varchar(10)
 );
-Go
+
 
 -- Section 4
 CREATE TABLE tblACTIVITY (
@@ -46,7 +59,7 @@ CREATE TABLE tblRATING (
 	RatingName varchar(50) NOT NULL,
 	RatingAbbrev varchar(50) NOT NULL,
 	RatingNumeric varchar(50) NOT NULL,
-	RatingDescr varchar(200)
+	RatingDescr varchar(500)
 )
 
 CREATE TABLE tblREVIEW (
