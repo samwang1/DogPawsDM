@@ -22,7 +22,7 @@ CREATE TABLE tblINTEREST(
 	InterestName VARCHAR(100) NOT NULL,
 	InterestDescr VARCHAR(500) NULL
 );
-Go
+GO
 
 Create Table tblSURVEY_TYPE(
 	SurveyTypeID int Identity Not Null,
