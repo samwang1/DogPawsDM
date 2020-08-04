@@ -2,6 +2,28 @@
 USE DOGPAWS_Surveys_Temp
 GO
 
+Create Table tblINTEREST_TYPE(
+	InterestTypeID int Identity Not Null,
+	InterestName varchar(100) Not Null,
+	InterestDescr varchar(500) Null
+);
+Go
+
+Create Table tblACTIVITY_TYPE(
+	ActivityTypeID int Identity Not Null,
+	ActivityTypeName varchar(100) Not Null,
+	ActivityTypeDescr varchar(500) Null
+);
+Go
+
+Create Table tblINTEREST(
+	InterestID int Identity Not Null,
+	Constraint fkInterestTypeID Foreign Key (InterestTypeID) References tblINTEREST_TYPE(InterestTypeID),
+	InterestName varchar(100) Not Null,
+	InterestDescr varchar(500) Null
+);
+Go
+
 Create Table tblSURVEY_TYPE(
 	SurveyTypeID int Identity Not Null,
 	SurveyTypeName varchar(100) Not Null,
