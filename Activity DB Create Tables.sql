@@ -19,27 +19,6 @@ CREATE TABLE tblPROFILE_CHARACTERISTIC (
 	ProfID INT foreign key references tblPROFILE(ProfileID) NOT NULL
 )
 
-CREATE TABLE tblINTEREST_TYPE(
-	InterestTypeID INT PRIMARY KEY IDENTITY(1,1),
-	InterestName VARCHAR(100) NOT NULL,
-	InterestDescr VARCHAR(500) NULL
-);
-GO
-
-CREATE TABLE tblACTIVITY_TYPE(
-	ActivityTypeID INT PRIMARY KEY IDENTITY(1,1),
-	ActivityTypeName VARCHAR(100) NOT NULL,
-	ActivityTypeDescr VARCHAR(500) NULL
-);
-GO
-
-CREATE TABLE tblINTEREST(
-	InterestID INT PRIMARY KEY IDENTITY(1,1),
-	InterestTypeID INT FOREIGN KEY REFERENCES tblINTEREST_TYPE(InterestTypeID) NOT NULL,
-	InterestName VARCHAR(100) NOT NULL,
-	InterestDescr VARCHAR(500) NULL
-);
-GO
 
 /*
 
@@ -53,15 +32,15 @@ CREATE TABLE tblPROFILE_TYPE (
  -- section 2
 
 Create Table tblLOCATION(
-	LocationID int Primary Key Identity Not Null,
-	LocationName varchar(50) Not Null,
+	LocationID int Primary Key Identity(1,1),
+	LocationName varchar(100) Not Null,
 	LocationDesc varchar(500)
 );
 
 Create Table tblBUILDING(
 	BuildingID int Primary Key Identity(1,1),
 	LocationID INT FOREIGN KEY REFERENCES tblLOCATION(LocationID),
-	BuildingName varchar(50) Not Null,
+	BuildingName varchar(100) Not Null,
 	BuildingDesc varchar(500),
 	BuildingShortName varchar(10)
 );
@@ -93,3 +72,26 @@ CREATE TABLE tblREVIEW (
 )
 
 
+-- Section 5
+
+CREATE TABLE tblINTEREST_TYPE(
+	InterestTypeID INT PRIMARY KEY IDENTITY(1,1),
+	InterestTypeName VARCHAR(100) NOT NULL,
+	InterestTypeDescr VARCHAR(500) NULL
+);
+GO
+
+CREATE TABLE tblACTIVITY_TYPE(
+	ActivityTypeID INT PRIMARY KEY IDENTITY(1,1),
+	ActivityTypeName VARCHAR(100) NOT NULL,
+	ActivityTypeDescr VARCHAR(500) NULL
+);
+GO
+
+CREATE TABLE tblINTEREST(
+	InterestID INT PRIMARY KEY IDENTITY(1,1),
+	InterestTypeID INT FOREIGN KEY REFERENCES tblINTEREST_TYPE(InterestTypeID) NOT NULL,
+	InterestName VARCHAR(100) NOT NULL,
+	InterestDescr VARCHAR(500) NULL
+);
+GO
