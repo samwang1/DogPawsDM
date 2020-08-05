@@ -2,28 +2,6 @@
 USE DOGPAWS_Surveys_Temp
 GO
 
-CREATE TABLE tblINTEREST_TYPE(
-	InterestTypeID INT PRIMARY KEY IDENTITY(1,1),
-	InterestName VARCHAR(100) NOT NULL,
-	InterestDescr VARCHAR(500) NULL
-);
-GO
-
-CREATE TABLE tblACTIVITY_TYPE(
-	ActivityTypeID INT PRIMARY KEY IDENTITY(1,1),
-	ActivityTypeName VARCHAR(100) NOT NULL,
-	ActivityTypeDescr VARCHAR(500) NULL
-);
-GO
-
-CREATE TABLE tblINTEREST(
-	InterestID INT PRIMARY KEY IDENTITY(1,1),
-	InterestTypeID INT FOREIGN KEY REFERENCES tblINTEREST_TYPE(InterestTypeID) NOT NULL,
-	InterestName VARCHAR(100) NOT NULL,
-	InterestDescr VARCHAR(500) NULL
-);
-GO
-
 Create Table tblSURVEY_TYPE(
 	SurveyTypeID int Identity Not Null,
 	SurveyTypeName varchar(100) Not Null,
