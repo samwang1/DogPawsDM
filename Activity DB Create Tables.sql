@@ -59,7 +59,7 @@ CREATE TABLE tblQUARTER(
 CREATE TABLE tblCOURSE(
     CourseID int Identity,
     CoursePrefix varchar(10),
-    CourseLevel varchar(10),
+    CourseLevel varchar(10)
 );
 
 CREATE TABLE tblCLASS(
@@ -70,7 +70,7 @@ CREATE TABLE tblCLASS(
     CONSTRAINT pkClass PRIMARY KEY (ClassID),
     CONSTRAINT fkCourse FOREIGN KEY (CourseID) REFERENCES tblCOURSE(CourseID),
     CONSTRAINT fkQuarter FOREIGN KEY (QuarterID) REFERENCES tblQUARTER(QuarterID),
-    CONSTRAINT fkActivity FOREIGN KEY (AcivityID) REFERENCES tblACTIVITY(AcivityID),
+    CONSTRAINT fkActivity FOREIGN KEY (AcivityID) REFERENCES tblACTIVITY(AcivityID)
 );
 
 -- Section 4
