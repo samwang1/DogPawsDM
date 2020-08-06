@@ -46,6 +46,33 @@ Create Table tblBUILDING(
 );
 
 
+-- Section 3
+
+CREATE TABLE tblQUARTER(
+    QuarterID int Identity,
+    SeasonID int,
+    [Year] varchar(4),
+    CONSTRAINT pkQUARTER PRIMARY KEY (QuarterID)
+    --CONSTRAINT fkSeasonID FOREIGN KEY (SeasonID) REFERENCES tblSEASON(SeasonID) **There should be a season look up table (autumn, winter, spring, summer)
+);
+
+CREATE TABLE tblCOURSE(
+    CourseID int Identity,
+    CoursePrefix varchar(10),
+    CourseLevel varchar(10),
+);
+
+CREATE TABLE tblCLASS(
+    ClassID int Identity,
+    CourseID int,
+    QuarterID int,
+    AcivityID int,
+    CONSTRAINT pkClass PRIMARY KEY (ClassID),
+    CONSTRAINT fkCourse FOREIGN KEY (CourseID) REFERENCES tblCOURSE(CourseID),
+    CONSTRAINT fkQuarter FOREIGN KEY (QuarterID) REFERENCES tblQUARTER(QuarterID),
+    CONSTRAINT fkActivity FOREIGN KEY (AcivityID) REFERENCES tblACTIVITY(AcivityID),
+);
+
 -- Section 4
 CREATE TABLE tblACTIVITY (
 	ActivityID INT PRIMARY KEY IDENTITY(1,1),
