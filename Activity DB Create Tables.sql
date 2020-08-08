@@ -58,7 +58,8 @@ CREATE TABLE tblCOURSE(
     CourseID int Identity,
 	CourseName varchar(100),
     CoursePrefix varchar(10),
-    CourseLevel varchar(10)
+    CourseLevel varchar(10),
+	CONSTRAINT pkCourse PRIMARY KEY (CourseID)
 );
 
 CREATE TABLE tblCLASS(
