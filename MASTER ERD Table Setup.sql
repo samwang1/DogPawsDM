@@ -63,12 +63,13 @@ CREATE TABLE tblDETAIL(
 	DetailDesc varchar(500)
 )
 
-CREATE TABLE tblPERSON(
-	PersonID INT PRIMARY KEY IDENTITY(1,1),
+CREATE TABLE tblPROFILE(
+	ProfileID INT PRIMARY KEY IDENTITY(1,1),
 	Fname varchar(20) NOT NULL,
 	Lname varchar(20) NOT NULL,
 	BirthDate DATE NULL,
 	NetID INT NULL,
+	OptIn BOOLEAN NOT NULL,
 	Email varchar(50)
 )
 
@@ -167,7 +168,7 @@ VALUES('Interest', 'Initial DogPaws Interest Survey')
 INSERT INTO tblQUESTION_TYPE(QuestionTypeName, QuestionTypeDescr) VALUES ('Multiple choice', 'The respondents select one or more options from a list of predefined answers.')
 INSERT INTO tblQUESTION_TYPE(QuestionTypeName, QuestionTypeDescr) VALUES ('Rating scale', 'The respondents select the number that most accurately represents their response from a range of values. (i.e. 1 to 10)')
 INSERT INTO tblQUESTION_TYPE(QuestionTypeName, QuestionTypeDescr) VALUES ('Likert scale', 'The respondents select the options that most accurately represents their response from a range of values. (i.e. strongly agree, agree, disagree, strongly disagree)')
-INSERT INTO tblQUESTION_TYPE(QuestionTypeName, QuestionTypeDescr) VALUES ('Short answer', 'The respondents will type their answer into a comment box and don’t provide specific pre-set answer options.')
+INSERT INTO tblQUESTION_TYPE(QuestionTypeName, QuestionTypeDescr) VALUES ('Short answer', 'The respondents will type their answer into a comment box and donï¿½t provide specific pre-set answer options.')
 INSERT INTO tblQUESTION_TYPE(QuestionTypeName, QuestionTypeDescr) VALUES ('Ranking', 'The respondents will order the list of options according to their preference.')
 
 
