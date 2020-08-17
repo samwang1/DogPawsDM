@@ -1,7 +1,7 @@
 /*** SURVEY ***/
 
 -- detail type, detail, person detail, person
-USE DOGPAWS_Surveys_Temp
+-- USE DOGPAWS_Surveys_Temp
 GO
 
 Create Table tblSURVEY_TYPE(
@@ -26,19 +26,17 @@ Create Table tbLDISTRIBUTION(
 	DistributionDescr varchar(500) Not Null,
 	Constraint pktblDistribution Primary Key (DistributionID)
 );
-Go
 
-Create Table tblSURVEY(
-	SurveyID int Identity Not Null,
-	SurveyTypeID int Not Null,
-	SurveyName varchar(100) Not Null,
-	SurveyBeginDate date Not Null,
-	SurveyEndDate date Not Null,
-	Constraint pktblSURVEY Primary Key (SurveyID),
-	Constraint fkSurveyTypeID Foreign Key (SurveyTypeID) References tblSURVEY_TYPE(SurveyTypeID)
-);
 Go
+CREATE TABLE tblSURVEY ( 
+SurveyID INT PRIMARY KEY IDENTITY(1,1) NOT NULL, 
+SurveyTypeID INT FOREIGN KEY REFERENCES tblSURVEY_TYPE(SurveyTypeID) NOT NULL, 
+SurveyName VARCHAR(500) NOT NULL, 
+SurveyBeginDate DATETIME NOT NULL, 
+SurveyEnd DATETIME NULL
+) 
 
+GO
 Create Table tblSURVEY_DISTRIBUTION(
 	SurveyDistID int Identity Not Null,
 	SurveyID int Not Null,
@@ -63,6 +61,12 @@ CREATE TABLE tblDETAIL(
 	DetailDesc varchar(500)
 )
 
+CREATE TABLE tblPROFILE_TYPE(
+	ProfileTypeID INT PRIMARY KEY IDENTITY(1,1),
+	ProfileTypeName varchar(50) NOT NULL,
+	ProfileTypeDesc varchar(500)
+)
+
 CREATE TABLE tblPROFILE(
 	ProfileID INT PRIMARY KEY IDENTITY(1,1),
 	ProfileTypeID INT FOREIGN KEY REFERENCES tblPROFILE_TYPE(ProfileTypeID),
@@ -70,13 +74,13 @@ CREATE TABLE tblPROFILE(
 	Lname varchar(20) NOT NULL,
 	BirthDate DATE NULL,
 	NetID INT NULL,
-	OptIn BOOLEAN NOT NULL,
+	OptIn BIT NOT NULL,
 	Email varchar(50)
 )
 
-CREATE TABLE tblPERSON_DETAIL(
+CREATE TABLE tblPROFILE_DETAIL(
 	PersonDetailID INT PRIMARY KEY IDENTITY(1,1),
-	PersonID INT FOREIGN KEY REFERENCES tblPERSON(PersonID),
+	PersonID INT FOREIGN KEY REFERENCES tblPROFILE(ProfileID),
 	DetailID INT FOREIGN KEY REFERENCES tblDETAIL(DetailID),
 	DateValue DATE,
 	CharValue CHAR,
@@ -89,28 +93,12 @@ CREATE TABLE tblQUESTION_TYPE(
 	QuestionTypeDescr varchar(200)
 )
 
-GO
-CREATE TABLE tblSURVEY ( 
-SurveyID INT IDENTITY(1,1) PRIMARY KEY NOT NULL, 
-SurveyTypeID INT FOREIGN KEY REFERENCES tblSURVEY_TYPE(SurveyTypeID) NOT NULL, 
-SurveyName VARCHAR(500) NOT NULL, 
-SurveyBeginDate DATETIME NOT NULL, 
-SurveyEnd DATETIME NULL 
-) 
-
 GO 
 CREATE TABLE tblRESPONSE ( 
 ResponseID INT IDENTITY(1,1) PRIMARY KEY NOT NULL, 
 ProfileID INT FOREIGN KEY REFERENCES tblPROFILE(ProfileID) NOT NULL, 
 ResponseDateTime DATETIME NOT NULL, 
 ResponseName VARCHAR(500) NOT NULL 
-) 
-
-GO 
-CREATE TABLE tblSURVEY_QUESTION_RESPONSE ( 
-SurvQuesRespID INT IDENTITY(1,1) PRIMARY KEY NOT NULL, 
-SurveyQuestionID INT FOREIGN KEY REFERENCES tblSURVEY_QUESTION(SurveyQuestionID) NOT NULL, 
-ResponseID INT FOREIGN KEY REFERENCES tblRESPONSE(ResponseID) NOT NULL
 )
 
 GO
@@ -125,6 +113,13 @@ CREATE TABLE tblSURVEY_QUESTION(
 	SurveyID int NOT NULL FOREIGN KEY REFERENCES tblSURVEY(SurveyID),
 	QuestionID int NOT NULL FOREIGN KEY REFERENCES tblQUESTION(QuestionID),
 	QuestionNumber int NOT NULL
+)
+
+GO 
+CREATE TABLE tblSURVEY_QUESTION_RESPONSE ( 
+SurvQuesRespID INT IDENTITY(1,1) PRIMARY KEY NOT NULL, 
+SurveyQuestionID INT FOREIGN KEY REFERENCES tblSURVEY_QUESTION(SurveyQuestionID) NOT NULL, 
+ResponseID INT FOREIGN KEY REFERENCES tblRESPONSE(ResponseID) NOT NULL
 )
 
 -- create Table tblSURVEY_OBJECTIVE
@@ -176,53 +171,12 @@ INSERT INTO tblQUESTION_TYPE(QuestionTypeName, QuestionTypeDescr) VALUES ('Ranki
 
 /*** ACTIVITY ***/
 
-
- -- section 1
-CREATE TABLE tblCHARACTERISTIC (
-	CharID INT primary key identity(1,1),
-	CharName varchar(500) NULL,
-	CharDescr varchar(500) NULL
-)
-
-CREATE TABLE tblPROFILE (
-	ProfileID INT primary key identity(1,1),
-	Fname varchar(500) NULL,
-	Lname varchar(500) NULL,
-	Email varchar(500) NULL,
-	ProfDescr varchar(500) NULL
-)
-
-CREATE TABLE tblPROFILE_DETAIL (
-	ProfileDetailID INT PRIMARY KEY IDENTITY(1,1),
-	ProfileID INT FOREIGN KEY REFERENCES tblPROFILE(ProfileID) NOT NULL,
-	DetailID INT FOREIGN KEY REFERENCES tblDETAIL(DetailID) NOT NULL,
-	DateAdded DATETIME NOT NULL
-)
-
 CREATE TABLE tblPROFILE_ACTIVITY (
 	ProfileActivityID INT PRIMARY KEY IDENTITY(1,1),
 	ProfileID INT FOREIGN KEY REFERENCES tblPROFILE(ProfileID) NOT NULL,
 	ActivityID INT FOREIGN KEY REFERENCES tblACTIVITY(ActivityID) NOT NULL,
-	ActivityTime DATETIME NOT NULL
+	ActivityTime DATETIME
 )
-
-
-
-CREATE TABLE tblPROFILE_CHARACTERISTIC (
-	ProfCharID INT primary key identity(1,1),
-	CharID INT foreign key references tblCHARACTERISTIC(CharID) NOT NULL,
-	ProfID INT foreign key references tblPROFILE(ProfileID) NOT NULL
-)
-
-
-/*
-CREATE TABLE tblPROFILE_TYPE (
-	ProfTypeID INT PRIMARY KEY IDENTITY(1,1),
-	ProfTypeName varchar(30) NOT NULL,
-	ProfTypeDesc varchar(500)
-)
-*/
- -- section 2
 
 Create Table tblLOCATION(
 	LocationID int Primary Key Identity(1,1),
@@ -242,17 +196,15 @@ Create Table tblBUILDING(
 -- Section 3
 
 CREATE TABLE tblQUARTER(
-    QuarterID int Identity,
-    QuarterName varchar(20),
-    CONSTRAINT pkQUARTER PRIMARY KEY (QuarterID)
+    QuarterID int PRIMARY KEY Identity(1,1),
+    QuarterName varchar(20) NOT NULL
 );
 
 CREATE TABLE tblCOURSE(
-    CourseID int Identity,
-	CourseName varchar(100),
+    CourseID INT PRIMARY KEY Identity(1,1),
+	CourseName varchar(100) NOT NULL,
     CoursePrefix varchar(10),
-    CourseLevel varchar(10),
-	CONSTRAINT pkCourse PRIMARY KEY (CourseID)
+    CourseLevel varchar(10)
 );
 
 CREATE TABLE tblCLASS(
@@ -266,7 +218,30 @@ CREATE TABLE tblCLASS(
     CONSTRAINT fkQuarter FOREIGN KEY (QuarterID) REFERENCES tblQUARTER(QuarterID)
 );
 
--- Section 4
+
+CREATE TABLE tblINTEREST_TYPE(
+	InterestTypeID INT PRIMARY KEY IDENTITY(1,1),
+	InterestTypeName VARCHAR(100) NOT NULL,
+	InterestTypeDescr VARCHAR(500) NULL
+);
+GO
+
+CREATE TABLE tblACTIVITY_TYPE(
+	ActivityTypeID INT PRIMARY KEY IDENTITY(1,1),
+	ActivityTypeName VARCHAR(100) NOT NULL,
+	ActivityTypeDescr VARCHAR(500) NULL
+);
+GO
+
+CREATE TABLE tblINTEREST(
+	InterestID INT PRIMARY KEY IDENTITY(1,1),
+	InterestTypeID INT FOREIGN KEY REFERENCES tblINTEREST_TYPE(InterestTypeID) NOT NULL,
+	InterestName VARCHAR(100) NOT NULL,
+	InterestDescr VARCHAR(500) NULL
+);
+GO
+
+
 CREATE TABLE tblACTIVITY (
 	ActivityID INT PRIMARY KEY IDENTITY(1,1),
 	ProfileID INT FOREIGN KEY REFERENCES tblPROFILE(ProfileID) NOT NULL,
@@ -291,27 +266,6 @@ CREATE TABLE tblREVIEW (
 	ReviewDate datetime NOT NULL
 )
 
+-- tblRELATIONSHIP
 
--- Section 5
-
-CREATE TABLE tblINTEREST_TYPE(
-	InterestTypeID INT PRIMARY KEY IDENTITY(1,1),
-	InterestTypeName VARCHAR(100) NOT NULL,
-	InterestTypeDescr VARCHAR(500) NULL
-);
-GO
-
-CREATE TABLE tblACTIVITY_TYPE(
-	ActivityTypeID INT PRIMARY KEY IDENTITY(1,1),
-	ActivityTypeName VARCHAR(100) NOT NULL,
-	ActivityTypeDescr VARCHAR(500) NULL
-);
-GO
-
-CREATE TABLE tblINTEREST(
-	InterestID INT PRIMARY KEY IDENTITY(1,1),
-	InterestTypeID INT FOREIGN KEY REFERENCES tblINTEREST_TYPE(InterestTypeID) NOT NULL,
-	InterestName VARCHAR(100) NOT NULL,
-	InterestDescr VARCHAR(500) NULL
-);
-GO
+-- tblFRIEND
