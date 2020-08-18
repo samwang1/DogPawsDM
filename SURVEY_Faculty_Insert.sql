@@ -111,8 +111,8 @@ BEGIN
 	WHILE @RowNum <= @TotalRows
 	BEGIN
 		SET @Email = (SELECT Question_2 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
-		IF NOT EXISTS (SELECT P.PersonID FROM tblPERSON P
-						JOIN tblRESPONSE R ON P.PersonID = R.PersonID
+		IF NOT EXISTS (SELECT R.ResponseID FROM tblRESPONSE R
+						JOIN tblPERSON P ON P.PersonID = R.PersonID
 						JOIN tblSURVEY_QUESTION_RESPONSE SQR ON R.ResponseID = SQR.ResponseID
 						JOIN tblSURVEY_QUESTION SQ ON SQR.SurveyQuestionID = SQ.SurveyQuestionID
 						JOIN tblSURVEY S ON SQ.SurveyID = S.SurveyID
@@ -215,7 +215,6 @@ BEGIN
 
 
 		-- For question 6
-		PRINT('q6')
 		DECLARE @Question_6 int = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'How long have you been working at UW?');
 		DECLARE @Q6_Resp varchar(50) = (SELECT Question_6 FROM SURVEY_Faculty WHERE ResponseID = @RowNum)
 
@@ -490,7 +489,7 @@ BEGIN
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
 			((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_17), SCOPE_IDENTITY())
 
-
+		SET @RowNum = @RowNum + 1
 	END -- end while loop
 END -- end proc
 
