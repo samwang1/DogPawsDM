@@ -1,7 +1,7 @@
-USE DOGPAWS_Surveys
+USE DOGPAWS_MASTER
 SELECT * FROM WK_1
 
-INSERT INTO tblSURVEY(SurveyName, SurveyBeginDate, SurveyEndDate, SurveyTypeID)
+INSERT INTO tblSURVEY(SurveyName, SurveyBeginDate, SurveyEnd, SurveyTypeID)
 VALUES('DogPaws Interest Survey', 'May 22, 2020', 'September 22, 2020', (SELECT SurveyTypeID FROM tblSURVEY_TYPE WHERE SurveyTypeName = 'Interest')) -- sample end date and surveytypeid
 
 /* inserts into tblQUESTION */
@@ -150,7 +150,7 @@ BEGIN
 	DECLARE @F varchar(50), @L varchar(50), @Email varchar(100), @Temp varchar(100)
 
 	DECLARE @ResponseDateTime DateTime = (Select Question_1 From WK_1 Where ResponseID = @RowNum),
-		@PersonPK INT
+		@ProfilePK INT
 
 	DECLARE @SurveyID INT = (SELECT SurveyID FROM tblSURVEY WHERE SurveyName = 'DogPaws Interest Survey')
 	--PRINT(@SurveyID)
@@ -172,9 +172,9 @@ BEGIN
 		
 		SET @Email = (SELECT Question_2 FROM WK_1 WHERE ResponseID = @RowNum)
 		
-		IF NOT EXISTS (SELECT PersonID FROM tblPERSON WHERE Email = @Email)
+		IF NOT EXISTS (SELECT ProfileID FROM tblPROFILE WHERE Email = @Email)
 			BEGIN
-				INSERT INTO tblPERSON(Fname, Lname, Email)
+				INSERT INTO tblPROFILE(Fname, Lname, Email)
 				VALUES(@F, @L, @Email)
 			END
 		ELSE
@@ -183,11 +183,11 @@ BEGIN
 				CONTINUE
 			 END
 
-		SET @PersonPK = (SELECT PersonID FROM tblPERSON WHERE Email = @Email)
-		--PRINT(@PersonPK)
+		SET @ProfilePK = (SELECT ProfileID FROM tblPROFILE WHERE Email = @Email)
+		--PRINT(@ProfilePK)
 		
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Email)
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+		VALUES(@ProfilePK, @ResponseDateTime, @Email)
 		DECLARE @RespID INT = SCOPE_IDENTITY()
 		--PRINT(@RespID)
 		--PRINT('Inserted into response')
@@ -203,15 +203,15 @@ BEGIN
 		DECLARE @Age INT = TRY_PARSE((SELECT Question_34 FROM WK_1 WHERE ResponseID = @RowNum) AS INT)
 		IF (@Age IS NOT NULL)
 			BEGIN
-				UPDATE tblPERSON
-				SET Age = @Age WHERE PersonID = @PersonPK
+				UPDATE tblPROFILE
+				SET Age = @Age WHERE ProfileID = @ProfilePK
 			END
 
 		DECLARE @Gender varchar(20) = (SELECT Question_35 FROM WK_1 WHERE ResponseID = @RowNum)
 		IF (@Gender IS NOT NULL)
 			BEGIN
-				UPDATE tblPERSON
-				SET Gender = @Gender WHERE PersonID = @PersonPK
+				UPDATE tblPROFILE
+				SET Gender = @Gender WHERE ProfileID = @ProfilePK
 			END
 
 
@@ -250,8 +250,8 @@ BEGIN
 		SET @D_ID = (SELECT SCOPE_IDENTITY())
 
 		-- q3
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Yr)
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+		VALUES(@ProfilePK, @ResponseDateTime, @Yr)
 
 		-- getting responseID
 		SET @R_ID = (SELECT SCOPE_IDENTITY())
@@ -267,9 +267,9 @@ BEGIN
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 		VALUES(@SQ_ID, @R_ID)
 
-		-- insert into person_detail
-		INSERT INTO tblPERSON_DETAIL(PersonID, DetailID)
-		VALUES(@PersonPK, @D_ID)
+		-- insert into Profile_detail
+		INSERT INTO tblPROFILE_DETAIL(ProfileID, DetailID)
+		VALUES(@ProfilePK, @D_ID)
 
 		-- repeat for q4
 		INSERT INTO tblDETAIL(DetailName, DetailTypeID)
@@ -277,11 +277,11 @@ BEGIN
 
 		SET @D_ID = (SELECT SCOPE_IDENTITY())
 
-		INSERT INTO tblPERSON_DETAIL(PersonID, DetailID)
-		VALUES(@PersonPK, @D_ID)
+		INSERT INTO tblPROFILE_DETAIL(ProfileID, DetailID)
+		VALUES(@ProfilePK, @D_ID)
 
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @StudType)
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+		VALUES(@ProfilePK, @ResponseDateTime, @StudType)
 		SET @R_ID = (SELECT SCOPE_IDENTITY())
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION
 				WHERE QuestionName = 'I am an... (resident status)')
@@ -302,11 +302,11 @@ BEGIN
 
 		SET @D_ID = (SELECT SCOPE_IDENTITY())
 
-		INSERT INTO tblPERSON_DETAIL(PersonID, DetailID)
-		VALUES(@PersonPK, @D_ID)
+		INSERT INTO tblPROFILE_DETAIL(ProfileID, DetailID)
+		VALUES(@ProfilePK, @D_ID)
 
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Housing)
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+		VALUES(@ProfilePK, @ResponseDateTime, @Housing)
 		SET @R_ID = (SELECT SCOPE_IDENTITY())
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION
 				WHERE QuestionName = 'I am... (housing status)')
@@ -328,8 +328,8 @@ BEGIN
 
 		IF @Q6 = 'None of the above'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'None of the above')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'None of the above')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -338,40 +338,40 @@ BEGIN
 			BEGIN
 				IF @Q6 LIKE '%participate in one or more Registered Student Organization%'
 					BEGIN
-						INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-						VALUES (@PersonPK, @ResponseDateTime, 'I participate in one or more Registered Student Organization(s) on campus')
+						INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+						VALUES (@ProfilePK, @ResponseDateTime, 'I participate in one or more Registered Student Organization(s) on campus')
 						SET @RespID = SCOPE_IDENTITY()
 						INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 						VALUES(@SQ_ID, @RespID)
 					END
 				IF @Q6 LIKE '%officer%'
 					BEGIN
-						INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-						VALUES (@PersonPK, @ResponseDateTime, 'I am an officer in one or more Registered Student Organization(s) on campus')
+						INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+						VALUES (@ProfilePK, @ResponseDateTime, 'I am an officer in one or more Registered Student Organization(s) on campus')
 						SET @RespID = SCOPE_IDENTITY()
 						INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 						VALUES(@SQ_ID, @RespID)
 					END
 				IF @Q6 LIKE '%sports%'
 					BEGIN
-						INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-						VALUES (@PersonPK, @ResponseDateTime, 'I participate in one or more sports teams (varsity or club)')
+						INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+						VALUES (@ProfilePK, @ResponseDateTime, 'I participate in one or more sports teams (varsity or club)')
 						SET @RespID = SCOPE_IDENTITY()
 						INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 						VALUES(@SQ_ID, @RespID)
 					END
 				IF @Q6 LIKE '%Greek%'
 					BEGIN
-						INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-						VALUES (@PersonPK, @ResponseDateTime, 'I am in the Greek System')
+						INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+						VALUES (@ProfilePK, @ResponseDateTime, 'I am in the Greek System')
 						SET @RespID = SCOPE_IDENTITY()
 						INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 						VALUES(@SQ_ID, @RespID)
 					END
 				IF @Q6 LIKE '%Fraternity%'
 					BEGIN
-						INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-						VALUES (@PersonPK, @ResponseDateTime, 'I am in a major-related Fraternity (i.e. Professional, Academic, etc.)')
+						INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+						VALUES (@ProfilePK, @ResponseDateTime, 'I am in a major-related Fraternity (i.e. Professional, Academic, etc.)')
 						SET @RespID = SCOPE_IDENTITY()
 						INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 						VALUES(@SQ_ID, @RespID)
@@ -388,88 +388,88 @@ BEGIN
 
 		IF @Q7 = 'Meet new people'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Meet new people')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Meet new people')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
 		IF @Q7 LIKE '%my major%'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Get into my major')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Get into my major')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
 		IF @Q7 LIKE 'Join a club%'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Join a club or RSO')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Join a club or RSO')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
 		IF @Q7 LIKE 'Join a fraternity%'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Join a fraternity or sorority')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Join a fraternity or sorority')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
 		IF @Q7 LIKE '%adult%'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Learn how to be an adult (i.e. budgeting, time-management, cooking, responsibility)')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Learn how to be an adult (i.e. budgeting, time-management, cooking, responsibility)')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
 		IF @Q7 LIKE '%connections%'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Make connections with professors')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Make connections with professors')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
 		IF @Q7 LIKE '%Ph.D.%'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Get into a Master''s or Ph.D. program')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Get into a Master''s or Ph.D. program')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
 		IF @Q7 LIKE '%research%'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Doing research as an undergrad')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Doing research as an undergrad')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
 		IF @Q7 LIKE '%figure out%'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Figure out what you want to do with your life')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Figure out what you want to do with your life')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
 		IF @Q7 LIKE '%partner%'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Find a partner')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Find a partner')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
 			END
 		IF @Q7 LIKE '%party%'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Go to a party')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Go to a party')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -486,8 +486,8 @@ BEGIN
 		IF @Q8 LIKE '%course load%'
 			BEGIN
 				--PRINT(CONCAT('Q8 1, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES(@PersonPK, @ResponseDateTime, 'Course load, homework, assignments')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES(@ProfilePK, @ResponseDateTime, 'Course load, homework, assignments')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -495,8 +495,8 @@ BEGIN
 		IF @Q8 LIKE '%exams%'
 			BEGIN
 				--PRINT(CONCAT('Q8 2, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES(@PersonPK, @ResponseDateTime, 'Exams')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES(@ProfilePK, @ResponseDateTime, 'Exams')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -505,8 +505,8 @@ BEGIN
 			BEGIN
 				--PRINT(CONCAT('Q8 3, ', @RowNum))
 				--PRINT('Q8 IF')
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES(@PersonPK, @ResponseDateTime, 'Having a difficult major')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES(@ProfilePK, @ResponseDateTime, 'Having a difficult major')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				--PRINT(@RespID)
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
@@ -515,8 +515,8 @@ BEGIN
 		IF @Q8 LIKE '%Getting into a difficult major%'
 			BEGIN
 				--PRINT(CONCAT('Q8 4, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES(@PersonPK, @ResponseDateTime, 'Getting into a difficult major')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES(@ProfilePK, @ResponseDateTime, 'Getting into a difficult major')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -524,8 +524,8 @@ BEGIN
 		IF @Q8 LIKE '%Making friends%'
 			BEGIN
 				--PRINT(CONCAT('Q8 5, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES(@PersonPK, @ResponseDateTime, 'Making friends')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES(@ProfilePK, @ResponseDateTime, 'Making friends')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -533,8 +533,8 @@ BEGIN
 		IF @Q8 LIKE '%Finding a club that fits your interests%'
 			BEGIN
 				--PRINT(CONCAT('Q8 6, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES(@PersonPK, @ResponseDateTime, 'Finding a club that fits your interests')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES(@ProfilePK, @ResponseDateTime, 'Finding a club that fits your interests')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -542,8 +542,8 @@ BEGIN
 		IF @Q8 LIKE '%Finding community%'
 			BEGIN
 				--PRINT(CONCAT('Q8 7, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES(@PersonPK, @ResponseDateTime, 'Finding community')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES(@ProfilePK, @ResponseDateTime, 'Finding community')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -551,8 +551,8 @@ BEGIN
 		IF @Q8 LIKE '%Adapting to living on your own%'
 			BEGIN
 				--PRINT(CONCAT('Q8 8, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES(@PersonPK, @ResponseDateTime, 'Adapting to living on your own')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES(@ProfilePK, @ResponseDateTime, 'Adapting to living on your own')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -569,8 +569,8 @@ BEGIN
 		IF @Q9 LIKE '%access to RSOs%'
 			BEGIN
 				--PRINT(CONCAT('Q9 1, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Easier access to RSOs and their events throughout the year')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Easier access to RSOs and their events throughout the year')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -578,8 +578,8 @@ BEGIN
 		IF @Q9 LIKE '%commute to campus%'
 			BEGIN
 				--PRINT(CONCAT('Q9 2, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Finding someone to commute to campus with')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Finding someone to commute to campus with')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -587,8 +587,8 @@ BEGIN
 		IF @Q9 LIKE '%internships%'
 			BEGIN
 				--PRINT(CONCAT('Q9 3, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Career development opportunities (i.e. networking, finding internships)')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Career development opportunities (i.e. networking, finding internships)')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -596,8 +596,8 @@ BEGIN
 		IF @Q9 LIKE '%roommate%'
 			BEGIN
 				--PRINT(CONCAT('Q9 4, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Finding a roommate you can get along')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Finding a roommate you can get along')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -605,8 +605,8 @@ BEGIN
 		IF @Q9 LIKE '%community%'
 			BEGIN
 				--PRINT(CONCAT('Q9 5, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Developing a community')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Developing a community')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -614,8 +614,8 @@ BEGIN
 		IF @Q9 LIKE '%study groups%'
 			BEGIN
 			--PRINT(CONCAT('Q9 6, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Creating study groups')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Creating study groups')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -623,8 +623,8 @@ BEGIN
 		IF @Q9 LIKE '%connections%'
 			BEGIN
 				--PRINT(CONCAT('Q9 7, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Making connections during class')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Making connections during class')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -632,8 +632,8 @@ BEGIN
 		IF @Q9 LIKE '%academic resources%'
 			BEGIN
 				--PRINT(CONCAT('Q9 8, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Knowing what academic resources are available')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Knowing what academic resources are available')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -641,8 +641,8 @@ BEGIN
 		IF @Q9 LIKE '%research%'
 			BEGIN
 			--PRINT(CONCAT('Q9 9, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Finding research opportunities')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Finding research opportunities')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -650,8 +650,8 @@ BEGIN
 		IF @Q9 LIKE '%majors%'
 			BEGIN
 				--PRINT(CONCAT('Q9 10, ', @RowNum))
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Exploring different majors')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Exploring different majors')
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -666,8 +666,8 @@ BEGIN
 		
 		-- For question 10
 		-- Insert into tblRESPONSE
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
-		(@PersonPK, @ResponseDateTime, (SELECT Question_10 FROM WK_1 WHERE ResponseID = @RowNum))
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName) VALUES
+		(@ProfilePK, @ResponseDateTime, (SELECT Question_10 FROM WK_1 WHERE ResponseID = @RowNum))
 
 		-- Insert into tblSURVEY_QUESTION_RESPONSE
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
@@ -675,8 +675,8 @@ BEGIN
 
 		-- For question 11
 		-- Insert into tblRESPONSE
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
-		(@PersonPK, @ResponseDateTime, (SELECT Question_11 FROM WK_1 WHERE ResponseID = @RowNum))
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName) VALUES
+		(@ProfilePK, @ResponseDateTime, (SELECT Question_11 FROM WK_1 WHERE ResponseID = @RowNum))
 
 		-- Insert into tblSURVEY_QUESTION_RESPONSE
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
@@ -684,8 +684,8 @@ BEGIN
 
 		-- For question 12
 		-- Insert into tblRESPONSE
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName) VALUES
-		(@PersonPK, @ResponseDateTime, (SELECT Question_12 FROM WK_1 WHERE ResponseID = @RowNum))
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName) VALUES
+		(@ProfilePK, @ResponseDateTime, (SELECT Question_12 FROM WK_1 WHERE ResponseID = @RowNum))
 
 		-- Insert into tblSURVEY_QUESTION_RESPONSE
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
@@ -706,12 +706,12 @@ BEGIN
 		DECLARE @Q17 INT = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = @Q17_String)
 
 		-- 13-17 Response
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, (SELECT Question_13 FROM WK_1 WHERE ResponseID = @RowNum)),
-		(@PersonPK, @ResponseDateTime, (SELECT Question_14 FROM WK_1 WHERE ResponseID = @RowNum)),
-		(@PersonPK, @ResponseDateTime, (SELECT Question_15 FROM WK_1 WHERE ResponseID = @RowNum)),
-		(@PersonPK, @ResponseDateTime, (SELECT Question_16 FROM WK_1 WHERE ResponseID = @RowNum)),
-		(@PersonPK, @ResponseDateTime, (SELECT Question_17 FROM WK_1 WHERE ResponseID = @RowNum))
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+		VALUES(@ProfilePK, @ResponseDateTime, (SELECT Question_13 FROM WK_1 WHERE ResponseID = @RowNum)),
+		(@ProfilePK, @ResponseDateTime, (SELECT Question_14 FROM WK_1 WHERE ResponseID = @RowNum)),
+		(@ProfilePK, @ResponseDateTime, (SELECT Question_15 FROM WK_1 WHERE ResponseID = @RowNum)),
+		(@ProfilePK, @ResponseDateTime, (SELECT Question_16 FROM WK_1 WHERE ResponseID = @RowNum)),
+		(@ProfilePK, @ResponseDateTime, (SELECT Question_17 FROM WK_1 WHERE ResponseID = @RowNum))
 		-- 13-17 Survey_Question_Response
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 		VALUES((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q13), SCOPE_IDENTITY()),
@@ -727,8 +727,8 @@ BEGIN
 		
 		IF @Q18 <> ''
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, @Q18)
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, @Q18)
 				SET @RespID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -741,8 +741,8 @@ BEGIN
 		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q_ID)
 		IF @Q19 <> ''
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, @Q19)
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, @Q19)
 				SET @R_ID = (SELECT SCOPE_IDENTITY())
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @R_ID)
@@ -757,8 +757,8 @@ BEGIN
 
 		IF @Q20 = 'Not Applicable (I am not in an RSO)'
 			BEGIN
-				INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-				VALUES (@PersonPK, @ResponseDateTime, 'Not Applicable (I am not in an RSO)')
+				INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+				VALUES (@ProfilePK, @ResponseDateTime, 'Not Applicable (I am not in an RSO)')
 				SET @RespID = SCOPE_IDENTITY()
 				INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 				VALUES(@SQ_ID, @RespID)
@@ -768,8 +768,8 @@ BEGIN
 			BEGIN
 				IF @Q20 LIKE '%Facebook%'
 					BEGIN
-						INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-						VALUES (@PersonPK, @ResponseDateTime, 'Facebook')
+						INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+						VALUES (@ProfilePK, @ResponseDateTime, 'Facebook')
 						SET @RespID = SCOPE_IDENTITY()
 						INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 						VALUES(@SQ_ID, @RespID)
@@ -777,8 +777,8 @@ BEGIN
 					END
 				IF @Q20 LIKE '%RSO''s Website%'
 					BEGIN
-						INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-						VALUES (@PersonPK, @ResponseDateTime, 'RSO''S Website')
+						INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+						VALUES (@ProfilePK, @ResponseDateTime, 'RSO''S Website')
 						SET @RespID = SCOPE_IDENTITY()
 						INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 						VALUES(@SQ_ID, @RespID)
@@ -786,8 +786,8 @@ BEGIN
 					END
 				IF @Q20 LIKE '%Email%'
 					BEGIN
-						INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-						VALUES (@PersonPK, @ResponseDateTime, 'Email')
+						INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+						VALUES (@ProfilePK, @ResponseDateTime, 'Email')
 						SET @RespID = SCOPE_IDENTITY()
 						INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 						VALUES(@SQ_ID, @RespID)
@@ -803,8 +803,8 @@ BEGIN
 		BEGIN
 			IF @Q21 LIKE '%Advising & Orientation%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Advising & Orientation')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Advising & Orientation')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -812,8 +812,8 @@ BEGIN
 				END
 			IF @Q21 LIKE '%Dawg Daze%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Dawg Daze')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Dawg Daze')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -821,8 +821,8 @@ BEGIN
 				END
 			IF @Q21 LIKE '%Facebook Groups%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Facebook Groups')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Facebook Groups')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -830,8 +830,8 @@ BEGIN
 				END
 			IF @Q21 LIKE '%Posters around campus%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Posters around campus')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Posters around campus')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -840,8 +840,8 @@ BEGIN
 			-- Common User Typed Responses (Other: '')
 			IF @Q21 LIKE '%Class%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Classes')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Classes')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -849,8 +849,8 @@ BEGIN
 				END
 			IF @Q21 LIKE '%Work%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Working on or off campus')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Working on or off campus')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -858,8 +858,8 @@ BEGIN
 				END
 			IF @Q21 LIKE '%Dorm%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Dorm Life')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Dorm Life')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -867,8 +867,8 @@ BEGIN
 				END
 			IF @Q21 LIKE '%Common spaces%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Common gathering areas')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Common gathering areas')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -876,8 +876,8 @@ BEGIN
 				END
 			IF @Q21 LIKE '%Club%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Joining clubs')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Joining clubs')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -885,8 +885,8 @@ BEGIN
 				END
 			IF @Q21 LIKE '%None%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'None of the above')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'None of the above')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -894,8 +894,8 @@ BEGIN
 				END
 			IF @Q21 LIKE '%Roommate%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Roommate search and activities')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Roommate search and activities')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -903,8 +903,8 @@ BEGIN
 				END
 			 IF @Q21 LIKE '%RSO%'
 				 BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Joining RSOs')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Joining RSOs')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -912,8 +912,8 @@ BEGIN
 				END
 			IF @Q21 LIKE '%Website%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Utilizing school websites and resources')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Utilizing school websites and resources')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -921,8 +921,8 @@ BEGIN
 				END
 			IF @Q21 LIKE '%Fair%'
 				BEGIN
-					INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-					VALUES (@PersonPK, @ResponseDateTime, 'Attending RSO fairs or other school fairs')
+					INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+					VALUES (@ProfilePK, @ResponseDateTime, 'Attending RSO fairs or other school fairs')
 					SET @RespID = SCOPE_IDENTITY()
 					INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 					VALUES(@SQ_ID, @RespID)
@@ -959,8 +959,8 @@ BEGIN
 	
 			-- Insert into tblRESPONSE and tblSURVEY_QUESTION_RESPONSE, 
 			-- string_split items will be trimmed first to eliminate starting and trailing spaces like (,)' Undergrad research  ' to facilitate future reports
-			INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-			VALUES (@PersonPK, @ResponseDateTime, (SELECT TRIM(Item) FROM #TempQ24Placeholder WHERE ItemID = @Q24CurRowNum))
+			INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+			VALUES (@ProfilePK, @ResponseDateTime, (SELECT TRIM(Item) FROM #TempQ24Placeholder WHERE ItemID = @Q24CurRowNum))
 			INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID) VALUES
 			((SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_24), SCOPE_IDENTITY())
 			--PRINT('QUESTION 24')
@@ -991,36 +991,36 @@ BEGIN
 		DECLARE @SurveyQuestionID_27 INT = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Question_27);
 
 		--insert user responses into tblRESPONSE	
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)	--Insert into tblRESPONSE
-			VALUES (@PersonPK, @ResponseDateTime, @Response_22);
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)	--Insert into tblRESPONSE
+			VALUES (@ProfilePK, @ResponseDateTime, @Response_22);
 		DECLARE @ResponseID INT = IDENT_CURRENT('tblRESPONSE');		--Store new responseID
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)	--Insert into  tblSURVEY_QUESTION_RESPONSE
 			VALUES(@SurveyQuestionID_22, @ResponseID);
 			--PRINT('QUESTION 22')
 
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-			VALUES (@PersonPK, @ResponseDateTime, @Response_23);
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+			VALUES (@ProfilePK, @ResponseDateTime, @Response_23);
 		SET @ResponseID = IDENT_CURRENT('tblRESPONSE');
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 			VALUES(@SurveyQuestionID_23, @ResponseID);
 			--PRINT('QUESTION 23')
 
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-			VALUES (@PersonPK, @ResponseDateTime, @Response_25);
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+			VALUES (@ProfilePK, @ResponseDateTime, @Response_25);
 		SET @ResponseID = IDENT_CURRENT('tblRESPONSE');
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 			VALUES(@SurveyQuestionID_25, @ResponseID);
 			--PRINT('QUESTION 25')
 
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-			VALUES (@PersonPK, @ResponseDateTime, @Response_26);
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+			VALUES (@ProfilePK, @ResponseDateTime, @Response_26);
 		SET @ResponseID = IDENT_CURRENT('tblRESPONSE');
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 			VALUES(@SurveyQuestionID_26, @ResponseID);
 			--PRINT('QUESTION 26')
 
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-			VALUES (@PersonPK, @ResponseDateTime, @Response_27);
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+			VALUES (@ProfilePK, @ResponseDateTime, @Response_27);
 		SET @ResponseID = IDENT_CURRENT('tblRESPONSE');
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 			VALUES(@SurveyQuestionID_27, @ResponseID);
@@ -1041,32 +1041,32 @@ BEGIN
 	
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [Career Service provides adequate resources for me to succeed.]');
 		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q_ID);
-		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Response_28)
+		INSERT INTO tblResponse(ProfileID, ResponseDateTime, ResponseName)
+		VALUES(@ProfilePK, @ResponseDateTime, @Response_28)
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 	    VALUES(@SQ_ID, SCOPE_IDENTITY()) --Insert into   tblSURVEY_QUESTION_RESPONSE
 		--PRINT('QUESTION 28')
 
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I feel prepared to find internships.]');
 		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q_ID);
-		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Response_29)
+		INSERT INTO tblResponse(ProfileID, ResponseDateTime, ResponseName)
+		VALUES(@ProfilePK, @ResponseDateTime, @Response_29)
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 	    VALUES(@SQ_ID, SCOPE_IDENTITY()) --Insert into   tblSURVEY_QUESTION_RESPONSE
 		--PRINT('QUESTION 29')
 
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Rate your level of agreement with the following statements: [I have resources to get trustworthy feedback on my resumes/cover letters.]');
 		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q_ID);
-		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Response_30)
+		INSERT INTO tblResponse(ProfileID, ResponseDateTime, ResponseName)
+		VALUES(@ProfilePK, @ResponseDateTime, @Response_30)
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 	    VALUES(@SQ_ID, SCOPE_IDENTITY()) --Insert into   tblSURVEY_QUESTION_RESPONSE
 		--PRINT('QUESTION 30')
 
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Can we contact you for more information?');
 		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q_ID);
-		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Response_31)
+		INSERT INTO tblResponse(ProfileID, ResponseDateTime, ResponseName)
+		VALUES(@ProfilePK, @ResponseDateTime, @Response_31)
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 	    VALUES(@SQ_ID, SCOPE_IDENTITY()) --Insert into   tblSURVEY_QUESTION_RESPONSE
 		--PRINT('QUESTION 31')
@@ -1074,8 +1074,8 @@ BEGIN
 		/* *** Q32 removed from survey ***
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION WHERE QuestionName = 'Are you interested in joining the DOGPAWS team?');
 		SET @SQ_ID = (SELECT SurveyQuestionID FROM tblSURVEY_QUESTION WHERE SurveyID = @SurveyID AND QuestionID = @Q_ID);
-		INSERT INTO tblResponse(PersonID, ResponseDateTime, ResponseName)
-		VALUES(@PersonPK, @ResponseDateTime, @Response_32)
+		INSERT INTO tblResponse(ProfileID, ResponseDateTime, ResponseName)
+		VALUES(@ProfilePK, @ResponseDateTime, @Response_32)
 		INSERT INTO tblSURVEY_QUESTION_RESPONSE(SurveyQuestionID, ResponseID)
 	    VALUES(@SQ_ID, SCOPE_IDENTITY()) --Insert into   tblSURVEY_QUESTION_RESPONSE
 		--PRINT('QUESTION 32')
@@ -1088,8 +1088,8 @@ BEGIN
 				SET @Temp = 'anon'
 			END
 
-		INSERT INTO tblRESPONSE(PersonID, ResponseDateTime, ResponseName)
-		VALUES (@PersonPK, @ResponseDateTime, @Temp)
+		INSERT INTO tblRESPONSE(ProfileID, ResponseDateTime, ResponseName)
+		VALUES (@ProfilePK, @ResponseDateTime, @Temp)
 		--PRINT(@Temp)
 		SET @RespID = SCOPE_IDENTITY()
 		SET @Q_ID = (SELECT QuestionID FROM tblQUESTION

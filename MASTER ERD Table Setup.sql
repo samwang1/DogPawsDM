@@ -2,6 +2,9 @@
 
 -- detail type, detail, person detail, person
 -- USE DOGPAWS_Surveys_Temp
+
+USE DOGPAWS_MASTER
+
 GO
 
 Create Table tblSURVEY_TYPE(
@@ -72,15 +75,19 @@ CREATE TABLE tblPROFILE(
 	ProfileTypeID INT FOREIGN KEY REFERENCES tblPROFILE_TYPE(ProfileTypeID),
 	Fname varchar(20) NOT NULL,
 	Lname varchar(20) NOT NULL,
-	BirthDate DATE NULL,
-	NetID INT NULL,
-	OptIn BIT NOT NULL,
-	Email varchar(50)
+	BirthDate DATE,
+	Age INT,
+	Gender varchar(10),
+	NetID INT,
+	OptIn BIT,
+	Email varchar(50),
+	Registered bit,
+	[Password] varchar(50)
 )
 
 CREATE TABLE tblPROFILE_DETAIL(
-	PersonDetailID INT PRIMARY KEY IDENTITY(1,1),
-	PersonID INT FOREIGN KEY REFERENCES tblPROFILE(ProfileID),
+	ProfileDetailID INT PRIMARY KEY IDENTITY(1,1),
+	ProfileID INT FOREIGN KEY REFERENCES tblPROFILE(ProfileID),
 	DetailID INT FOREIGN KEY REFERENCES tblDETAIL(DetailID),
 	DateValue DATE,
 	CharValue CHAR,
@@ -171,13 +178,6 @@ INSERT INTO tblQUESTION_TYPE(QuestionTypeName, QuestionTypeDescr) VALUES ('Ranki
 
 /*** ACTIVITY ***/
 
-CREATE TABLE tblPROFILE_ACTIVITY (
-	ProfileActivityID INT PRIMARY KEY IDENTITY(1,1),
-	ProfileID INT FOREIGN KEY REFERENCES tblPROFILE(ProfileID) NOT NULL,
-	ActivityID INT FOREIGN KEY REFERENCES tblACTIVITY(ActivityID) NOT NULL,
-	ActivityTime DATETIME
-)
-
 Create Table tblLOCATION(
 	LocationID int Primary Key Identity(1,1),
 	LocationName varchar(100) Not Null,
@@ -247,7 +247,15 @@ CREATE TABLE tblACTIVITY (
 	ProfileID INT FOREIGN KEY REFERENCES tblPROFILE(ProfileID) NOT NULL,
 	ClassID INT FOREIGN KEY REFERENCES tblCLASS(ClassID),
 	BuildingID INT FOREIGN KEY REFERENCES tblBUILDING(BuildingID) NOT NULL,
-	InterestID INT FOREIGN KEY REFERENCES tblINTEREST(InterestID) NOT NULL
+	InterestID INT FOREIGN KEY REFERENCES tblINTEREST(InterestID) NOT NULL,
+	ActivityTypeID INT FOREIGN KEY REFERENCES tblACTIVITY_TYPE(ActivityTypeID)
+)
+
+CREATE TABLE tblPROFILE_ACTIVITY (
+	ProfileActivityID INT PRIMARY KEY IDENTITY(1,1),
+	ProfileID INT FOREIGN KEY REFERENCES tblPROFILE(ProfileID) NOT NULL,
+	ActivityID INT FOREIGN KEY REFERENCES tblACTIVITY(ActivityID) NOT NULL,
+	ActivityTime DATETIME
 )
 
 CREATE TABLE tblRATING (
