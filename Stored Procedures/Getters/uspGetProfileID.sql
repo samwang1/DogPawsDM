@@ -1,5 +1,5 @@
 GO
-CREATE PROC uspGetPerson
+CREATE PROC uspGetProfileID
 @fname varchar(20),
 @lname varchar(20),
 @dob DATE,

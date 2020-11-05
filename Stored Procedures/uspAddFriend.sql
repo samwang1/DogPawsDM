@@ -12,7 +12,7 @@ CREATE PROC uspAddFriend
 @fname2 varchar(20),
 @lname2 varchar(20),
 @dob2 DATE,
-@relationship varchar(20)
+@relationship varchar(30)
 
 AS
 BEGIN
@@ -21,7 +21,7 @@ BEGIN
   -- assume relationship is a lookup table with default value "Other"
   SET @RID = (SELECT RelationshipID FROM tblRELATIONSHIP WHERE RelationshipName = @relationship)
   
-  EXEC uspGetPerson
+  EXEC uspGetProfileID
   @fname = @fname1,
   @lname = @lname1,
   @dob = @dob1,
@@ -32,7 +32,7 @@ BEGIN
     RAISERROR ('@P1ID cannot be NULL', 11, 1)
   END
   
-  EXEC uspGetPerson
+  EXEC uspGetProfileID
   @fname = @fname2,
   @lname = @lname2,
   @dob = @dob2,

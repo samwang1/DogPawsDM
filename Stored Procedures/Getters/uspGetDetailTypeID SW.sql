@@ -1,0 +1,8 @@
+USE DOGPAWS_TEST
+GO
+
+CREATE PROC uspGetDetailTypeID
+@DT_Name varchar(50),
+@DT_ID INT OUTPUT
+AS
+SET @DT_ID = (SELECT DetailTypeID FROM tblDETAIL_TYPE WHERE DetailTypeName = @DT_Name)
