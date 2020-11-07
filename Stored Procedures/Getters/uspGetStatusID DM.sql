@@ -1,0 +1,11 @@
+USE DOGPAWS_TEST
+GO
+
+CREATE PROCEDURE uspGetStatusID
+@StatName nvarchar(100),
+@StatID INT OUTPUT
+AS
+SET @StatID = (SELECT StatusID 
+			FROM tblSTATUS
+			WHERE StatusID = @StatID)
+GO
