@@ -1,0 +1,11 @@
+USE DOGPAWS_TEST;
+GO
+
+--EXEC sp_help tblQUARTER
+
+CREATE PROC uspGetQuarterID_RT
+@QName VARCHAR(100),
+@QuarterID INT OUTPUT
+AS
+	SET @QuarterID = (SELECT QuarterID FROM tblQUARTER WHERE QuarterName = @QName)
+GO
