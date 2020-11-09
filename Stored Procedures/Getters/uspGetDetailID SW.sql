@@ -10,8 +10,11 @@ BEGIN
 	DECLARE @DetailType_ID INT
 
 	EXEC uspGetDetailTypeID
-		@DT_Name = @DetailTypeName
+		@DT_Name = @DetailTypeName,
 		@DT_ID = @DetailType_ID OUTPUT
 
 	SET @D_ID = (SELECT DetailID FROM tblDETAIL WHERE DetailName = @D_Name AND DetailTypeID = @DetailType_ID)
 END
+
+SELECT * FROM tblDETAIL D
+	JOIN tblDETAIL_TYPE DT ON D.DetailTypeID = DT.DetailTypeID

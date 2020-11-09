@@ -4,7 +4,7 @@ GO
 --EXEC sp_help tblQUARTER
 
 CREATE PROC uspGetQuarterID_RT
-@QName VARCHAR(100),
+@QName VARCHAR(20),
 @QuarterID INT OUTPUT
 AS
 	SET @QuarterID = (SELECT QuarterID FROM tblQUARTER WHERE QuarterName = @QName)
