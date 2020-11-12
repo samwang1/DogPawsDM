@@ -19,3 +19,11 @@ SET @B_ID = (
 		AND LocationID = @L_ID
 )
 GO
+
+DECLARE @OUT INT
+EXEC uspGetBuildingID @B_Name = 'McMahon Hall', @L_Name = 'North Campus', @B_ID = @OUT OUTPUT
+PRINT(@OUT)
+
+USE DOGPAWS_tEST
+SELECT * FROM tblBUILDING B
+	JOIN tblLOCATION L ON B.LocationID = L.LocationID
