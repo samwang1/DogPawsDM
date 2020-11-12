@@ -1,5 +1,5 @@
+
 CREATE PROC uspGetReviewID
-@RevName varchar(100),
 @RevContent varchar(100),
 @RtName varchar(50),
 @ACTName varchar(50),
