@@ -7,6 +7,55 @@ library(plyr)
 df <- read.csv("interest survey responses.csv")
 df <- df %>% rename(campus_location = X)
 
+## TRANSFORM LIKERT SCALE TO NUMERIC SCALE:
+## Strongly Agree = 7, Agree = 6, Slightly Agree = 5, Neither Agree/Disagree = 4,
+##  Slightly Disagree = 3, Disagree = 2, Strongly Disagree = 1
+
+# Do for all questions that need analysis
+sel_dont_belong <- df %>% 
+  select(Rate.your.level.of.agreement.with.the.following.statements...I.had.a.hard.time.finding.a.group.that.I.feel.I.belong.to..)
+
+# Change Likert to Numeric scale
+sel_dont_belong <- revalue(unlist(sel_dont_belong), c("Strongly Agree" = "7", "Agree" = "6", "Slightly Agree" = "5", "Neither Agree/Disagree" = "4",
+                                                                    "Slightly Disagree" = "3", "Disagree" = "2", "Strongly Disagree" = "1"))
+# Mutate data-frame
+df <- df %>%
+  mutate(dont_belong_numeric = sel_dont_belong)
+
+### "I find it hard to make friends at UW"
+sel_hard_make_friends <- df %>% 
+  select(Rate.your.level.of.agreement.with.the.following.statements...I.find.it.hard.to.make.friends.at.UW..)
+sel_hard_make_friends <- revalue(unlist(sel_hard_make_friends), c("Strongly Agree" = "7", "Agree" = "6", "Slightly Agree" = "5", "Neither Agree/Disagree" = "4",
+                                                            "Slightly Disagree" = "3", "Disagree" = "2", "Strongly Disagree" = "1"))
+df <- df %>%
+  mutate(hard_make_friends_numeric = sel_hard_make_friends)
+
+### "I initially felt lost when I came to UW"
+sel_feel_lost <- df %>% 
+  select(Rate.your.level.of.agreement.with.the.following.statements...I.initially.felt.lost.coming.when.I.came.to.UW..)
+sel_feel_lost <- revalue(unlist(sel_feel_lost), c("Strongly Agree" = "7", "Agree" = "6", "Slightly Agree" = "5", "Neither Agree/Disagree" = "4",
+                                                          "Slightly Disagree" = "3", "Disagree" = "2", "Strongly Disagree" = "1"))
+df <- df %>% 
+  mutate(feel_lost_numeric = sel_feel_lost)
+
+### "I find it easy to form study groups"
+sel_easy_study_grp <- df %>% 
+  select(Rate.your.level.of.agreement.with.the.following.statements...I.find.it.easy.to.form.study.groups..)
+sel_easy_study_grp <- revalue(unlist(sel_easy_study_grp), c("Strongly Agree" = "7", "Agree" = "6", "Slightly Agree" = "5", "Neither Agree/Disagree" = "4",
+                                                               "Slightly Disagree" = "3", "Disagree" = "2", "Strongly Disagree" = "1"))
+df <- df %>% 
+  mutate(easy_study_grp_numeric = sel_easy_study_grp)
+
+### "I have a lot of friends from class or study groups"
+sel_friends_from_class <- df %>% 
+  select(Rate.your.level.of.agreement.with.the.following.statements...I.have.a.lot.of.friends.from.class.or.study.groups..)
+sel_friends_from_class <- revalue(unlist(sel_friends_from_class), c("Strongly Agree" = "7", "Agree" = "6", "Slightly Agree" = "5", "Neither Agree/Disagree" = "4",
+                                                                "Slightly Disagree" = "3", "Disagree" = "2", "Strongly Disagree" = "1"))
+df <- df %>% 
+  mutate(friends_from_class_numeric = sel_friends_from_class)
+
+
+
 ### DEMOGRAPHICS ###
 
 # set up sub-data frames based on class standing
@@ -49,24 +98,37 @@ grads_INT <- gradStudents %>% filter(I.am.an... == "International Student")
 ### DATA ANALYSIS ###
 
 ## "I had a hard time finding a group that I feel I belong to"
+
 # Only 1 freshman surveyed, not enough data for analysis.
 
-countStrongAgree <- juniors %>% count(
-  Rate.your.level.of.agreement.with.the.following.statements...I.had.a.hard.time.finding.a.group.that.I.feel.I.belong.to.. == "Strongly Agree")
+### JUNIORS
+#In-State
+jun_IS_dont_belong <- jun_IS %>% filter(dont_belong_numeric >= 5)
 
-countSlightAgree <- juniors %>% count(
-  Rate.your.level.of.agreement.with.the.following.statements...I.had.a.hard.time.finding.a.group.that.I.feel.I.belong.to.. == "Slightly Agree")
+jun_IS_belong_sum <- data.frame("Category" = c("Agree", "Neutral/Disagree"), "Counts" = c(nrow(jun_IS_dont_belong), nrow(jun_IS) - nrow(jun_IS_dont_belong)))
 
-
-countDisagree <- juniors %>% count(
-  Rate.your.level.of.agreement.with.the.following.statements...I.had.a.hard.time.finding.a.group.that.I.feel.I.belong.to.. != "Strongly Agree"
-  || Rate.your.level.of.agreement.with.the.following.statements...I.had.a.hard.time.finding.a.group.that.I.feel.I.belong.to.. != "Slightly Agree")
-
-
-fig <- plot_ly(juniors, x = ~countStrongAgree$, y = ~countSlightAgree, type = 'scatter')
-ggplot(df, aes(x = c("Slightly/Strongly Agree", "Neutral and Below"),
-               y = c(countStrongAgree + countSlightAgree, nrow(juniors) - (countStrongAgree + countSlightAgree)))
-       + geom_bar(stat="identity", width=1))
+jun_IS_dont_belong_plot <- plot_ly(
+  jun_IS_belong_sum,
+  x=~Category,
+  y=~Counts,
+  type='bar',
+  text=~Counts,
+  textposition='auto'
+)
 
 
+
+
+# 
+# jun_IS_belong_summary <- summarize(jun_IS_grouped_belong, agree = nrow(jun_IS_dont_belong), disagree = (nrow(jun_IS) - nrow(jun_IS_dont_belong)))#, total = nrow(jun_IS))
+# 
+# ggplot(jun_IS_belong_summary, aes(x = agree, y = disagree)) +
+#   geom_bar(stat="identity", width=1)
+# 
+# fig <- plot_ly(juniors, x = ~countStrongAgree$, y = ~countSlightAgree, type = 'scatter')
+# ggplot(df, aes(x = c("Slightly/Strongly Agree", "Neutral and Below"),
+#                y = c(countStrongAgree + countSlightAgree, nrow(juniors) - (countStrongAgree + countSlightAgree)))
+#        + geom_bar(stat="identity", width=1))
+# 
+# 
 
