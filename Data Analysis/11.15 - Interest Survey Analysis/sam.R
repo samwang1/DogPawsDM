@@ -116,7 +116,26 @@ jun_IS_dont_belong_plot <- plot_ly(
   textposition='auto'
 )
 
+### Those who responded "none of the above" for the question asking if they participate in RSOs, Greek system, etc.
 
+## FRESHMEN
+# only 1 freshman, they participate in one or more RSOs. No freshmen fit this criteria.
+fresh_IS_dont_participate <- fresh_IS %>% filter(Which.statements.below.best.describe.you...Select.all.that.apply.== "None of the above")
+
+## SOPHOMORES
+soph_IS_dont_participate <- soph_IS %>% filter(Which.statements.below.best.describe.you...Select.all.that.apply.== "None of the above")
+soph_OOS_dont_participate <- soph_OOS %>% filter(Which.statements.below.best.describe.you...Select.all.that.apply.== "None of the above")
+soph_INT_dont_participate <- soph_INT %>% filter(Which.statements.below.best.describe.you...Select.all.that.apply.== "None of the above")
+
+## JUNIORS
+jun_IS_dont_participate <- jun_IS %>% filter(Which.statements.below.best.describe.you...Select.all.that.apply.== "None of the above")
+jun_OOS_dont_participate <- jun_OOS %>% filter(Which.statements.below.best.describe.you...Select.all.that.apply.== "None of the above")
+jun_INT_dont_participate <- jun_INT %>% filter(Which.statements.below.best.describe.you...Select.all.that.apply.== "None of the above")
+
+## SENIORS
+sen_IS_dont_participate <- sen_IS %>% filter(Which.statements.below.best.describe.you...Select.all.that.apply.== "None of the above")
+sen_OOS_dont_participate <- sen_OOS %>% filter(Which.statements.below.best.describe.you...Select.all.that.apply.== "None of the above")
+sen_INT_dont_participate <- sen_INT %>% filter(Which.statements.below.best.describe.you...Select.all.that.apply.== "None of the above")
 
 
 # 
