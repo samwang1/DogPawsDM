@@ -1,0 +1,10 @@
+USE DOGPAWS_TEST;
+GO
+
+
+CREATE PROC uspGetQuestionID
+@QName VARCHAR(100),
+@QuestionID INT OUTPUT
+AS
+	SET @QuestionID = (SELECT @QuestionID FROM tblQUESTION WHERE SurveyName = @QName)
+GO
