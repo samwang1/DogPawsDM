@@ -1,0 +1,16 @@
+USE DOGPAWS_TEST;
+GO
+
+
+CREATE PROC uspGetSurveyID
+@SName VARCHAR(100),
+@SurveyID INT OUTPUT
+AS
+	SET @SurveyID = (SELECT @SurveyID FROM tblSURVEY WHERE SurveyName = @SName)
+GO
+
+
+
+
+
+
