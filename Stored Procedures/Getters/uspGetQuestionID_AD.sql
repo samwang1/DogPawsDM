@@ -3,8 +3,8 @@ GO
 
 
 CREATE PROC uspGetQuestionID
-@QName VARCHAR(100),
+@QName VARCHAR(500),
 @QuestionID INT OUTPUT
 AS
-	SET @QuestionID = (SELECT @QuestionID FROM tblQUESTION WHERE SurveyName = @QName)
+	SET @QuestionID = (SELECT @QuestionID FROM tblQUESTION WHERE QuestionName = @QName)
 GO
